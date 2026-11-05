@@ -1,0 +1,9 @@
+No licence has been chosen yet.
+
+This repository is private and is shared with invited collaborators for review.
+Until a licence is added, all rights are reserved by the author.
+
+Why: the Fortran code in simulations/Source/ was adapted from the Monte Carlo case study
+that accompanies the book "Understanding Molecular Simulation" by Daan Frenkel and Berend Smit.
+The licence of that code has to be checked before this repository can be made public
+or given an open-source licence. See README.md, section "Credits and licence".

@@ -1,0 +1,354 @@
+\documentclass[10.5pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.1cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+
+\definecolor{accent}{HTML}{1F4E79}
+\definecolor{soft}{HTML}{EAF1F8}
+\definecolor{warn}{HTML}{FFF4E0}
+\definecolor{warnline}{HTML}{C77700}
+
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{0pt}{1.5em plus .3em minus .2em}{0.5em}{\Large\bfseries\color{accent}}}
+\renewcommand\subsection{\@startsection{subsection}{2}{0pt}{1.2em plus .2em minus .1em}{0.4em}{\large\bfseries\color{accent}}}
+\makeatother
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\renewcommand{\arraystretch}{1.25}
+\let\olditemize\itemize\renewcommand\itemize{\olditemize\setlength\itemsep{0.15em}\setlength\topsep{0.3em}}
+\let\oldenumerate\enumerate\renewcommand\enumerate{\oldenumerate\setlength\itemsep{0.15em}\setlength\topsep{0.3em}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Paper manual: Sanz et al., PRL 99, 055501 (2007)}
+\fancyhead[R]{\small page \thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+\newenvironment{keybox}{\par\medskip\noindent\begin{lrbox}{\mybox}\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}}{\end{minipage}\end{lrbox}\noindent\fcolorbox{accent}{soft}{\usebox{\mybox}}\par\medskip}
+\newenvironment{warnbox}{\par\medskip\noindent\begin{lrbox}{\mybox}\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}}{\end{minipage}\end{lrbox}\noindent\fcolorbox{warnline}{warn}{\usebox{\mybox}}\par\medskip}
+\newsavebox{\mybox}
+
+\newcommand{\Ts}{T^{*}}
+\newcommand{\ps}{p^{*}}
+\newcommand{\kT}{k_{\mathrm B}T}
+\newcommand{\yes}{\textcolor{green!45!black}{\textbf{yes}}}
+\newcommand{\no}{\textcolor{red!70!black}{\textbf{no}}}
+\newcommand{\done}{\textcolor{green!45!black}{\textbf{done}}}
+\newcommand{\notdone}{\textcolor{red!70!black}{\textbf{not done}}}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries\color{accent} Paper manual\\[2pt]}
+{\large Evidence for Out-of-Equilibrium Crystal Nucleation in Suspensions of Oppositely Charged Colloids}\\[4pt]
+E.\ Sanz, C.\ Valeriani, D.\ Frenkel, M.\ Dijkstra, \emph{Phys.\ Rev.\ Lett.} \textbf{99}, 055501 (2007)\\[4pt]
+\small What they did, in order, how each number was measured, and how to redo the part you reproduced.
+\end{center}
+
+\begin{keybox}
+\textbf{How to use this document.} Read sections 1--4 once to get the story (about 15 minutes). Use sections 5--8 as a reference when you redo or explain something.
+Every number was checked against the PDF pages. Where I read a value off a figure it is marked \emph{approx.}\ Where the paper is silent, the table in section~2 says so.
+\end{keybox}
+
+%--------------------------------------------------------------------
+\section{The objective}
+
+A liquid freezes through a rare event: a small crystal nucleus must form and grow beyond a \textbf{critical size}. When more than one crystal is possible, \emph{which one forms?}
+
+The textbook answer is the \textbf{Stranski--Totomanow (ST) conjecture}: the crystal with the \textbf{lowest free-energy barrier} nucleates first.
+In classical nucleation theory (CNT) the rate is
+\begin{equation}
+R=\Gamma\,e^{-\Delta G_{\mathrm{crit}}/\kT},
+\end{equation}
+where $\Gamma$ is a kinetic prefactor and $\Delta G_{\mathrm{crit}}$ the barrier. ST rests on two hidden assumptions: (i) sub-critical clusters are in \emph{quasi-equilibrium} (they keep rearranging into their lowest-free-energy structure), and (ii) $\Gamma$ is similar for the competing crystals, so only the barrier matters.
+
+The paper tests ST by measuring two things \textbf{independently} and checking whether they agree.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}l X X@{}}
+\toprule
+Quantity & Question it answers & Method\\
+\midrule
+Nucleation \textbf{rate} & Which crystal \emph{actually} nucleates, and how fast? & Forward-flux sampling (FFS)\\
+Free-energy \textbf{barrier} & Which crystal is \emph{thermodynamically cheapest} to nucleate? & Umbrella sampling\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{keybox}
+\textbf{What would disprove ST:} the crystal that nucleates has the \emph{higher} barrier, and the nucleating structure \emph{changes} when you speed up the equilibration of the cluster with swap moves. The second observation shows that the clusters were not in equilibrium.
+\end{keybox}
+
+%--------------------------------------------------------------------
+\section{The system and every input}
+
+\textbf{Model.} A 1:1 mixture of hard spheres of diameter $\sigma$, half positive and half negative, interacting through a screened-Coulomb (Yukawa) pair potential (paper Eq.~2):
+\begin{equation}
+\frac{u(r)}{\kT}=
+\begin{cases}
+\infty & r<\sigma\\[2pt]
+\pm\dfrac{Z^{2}}{(1+\kappa\sigma/2)^{2}}\,\dfrac{\lambda_B}{\sigma}\,\dfrac{e^{-\kappa(r-\sigma)}}{r/\sigma} & r_c>r\ge\sigma\\[8pt]
+0 & r\ge r_c
+\end{cases}
+\end{equation}
+The sign is $+$ for equal charges and $-$ for opposite charges. Here $\lambda_B=e^{2}/\epsilon_s\kT$ is the Bjerrum length and $\kappa=\sqrt{8\pi\lambda_B\rho_{\mathrm{salt}}}$ the inverse Debye length.
+
+\textbf{Reduced units.}
+\begin{equation}
+\Ts=\frac{(1+\kappa\sigma/2)^{2}\,\sigma}{Z^{2}\lambda_B}\;=\;\frac{\kT}{\text{contact energy}},\qquad
+\ps=\frac{p\,\sigma^{3}}{\kT},\qquad
+\eta=\frac{\pi\sigma^{3}N}{6V}.
+\end{equation}
+In your code (\texttt{Source/ener.f}) the pair energy is $u=\pm e^{-\kappa(r-\sigma)}/(r/\sigma)$ in units of the contact energy, which is the same potential.
+
+\subsection*{Input table}
+
+\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{4.1cm} >{\raggedright\arraybackslash}p{4.6cm} c >{\raggedright\arraybackslash}p{4.5cm}@{}}
+\toprule
+\textbf{Input} & \textbf{Paper value} & \textbf{Stated?} & \textbf{Your code / runs}\\
+\midrule
+\endhead
+Composition & 1:1 binary & \yes & 500 + / 500 $-$\\
+$\kappa\sigma$ & 6 & \yes & 6\\
+Cutoff $r_c$ & $3.5\sigma$ & \yes & 3.5\\
+$\Ts$ & 1 (disordered-fcc/CsCl/fluid triple point at 1.07) & \yes & 1\\
+$\ps$ for FFS and umbrella sampling & \textbf{15} ($\ps/\ps_{\rm coex}\approx1.7$, $\ps_{\rm coex}=8.8\pm0.1$) & \yes & not used\\
+$\ps$ for the brute-force check & \textbf{18} & qualitative only & 18\\
+Liquid packing fraction & $\eta=0.526\pm0.005$ at $\ps=15$ (coexistence: $0.471\pm0.005$) & \yes & $\approx0.543$ at $\ps=18$ (validated parent)\\
+$N$ (FFS) & 1000 & \yes & 1000\\
+$N$ (umbrella sampling) & 8000 & \yes & not used\\
+Dynamics & kinetic MC in NpT, small max.\ displacement & \yes & yes\\
+dr for the initial flux $\phi_{l\to J}$ & $0.01\,\sigma$ & \yes & branch \texttt{dr\_0.01}\\
+dr for FFS branching trajectories & $0.04\,\sigma$ & \yes & branch \texttt{dr\_0.04}\\
+One MC cycle & one trial move per particle \textbf{plus one volume move} & \yes & 1000 + 1\\
+Swap moves & none, or \textbf{20\%} & \yes & none implemented\\
+Reaction coordinate & $n$ = particles in the largest solid cluster, from ref.\ [18] & citation only & see \texttt{04\_cluster\_size} (to be written)\\
+\midrule
+\multicolumn{4}{@{}l}{\textbf{\textcolor{red!70!black}{NOT stated in the paper}}}\\
+\midrule
+Volume step \texttt{vmax} & --- & \no & you tested it (\texttt{5\_Vmax\_Search})\\
+dr of the brute-force $\ps=18$ run & --- & \no & you ran 0.01 and 0.04\\
+System size at $\ps=18$ & --- & \no & 1000\\
+FFS interface positions, trajectories per interface & --- & \no & n/a\\
+Cluster thresholds (cutoff, dot-product, min.\ connections) & see ref.\ [18] & \no & q6 script: 1.45, $>0.70$, $\ge7$\\
+MC cycles $\to$ physical time & --- & \no & n/a\\
+Number of runs / seeds at $\ps=18$ & --- & \no & 1 per branch\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+%--------------------------------------------------------------------
+\section{The experiments, in order}
+
+\begin{center}
+\newcommand{\fb}[1]{\fcolorbox{accent}{soft}{\parbox{2.5cm}{\centering\small #1}}}
+\fb{\textbf{Step 0}\\brute force\\$\ps=15$}\,$\rightarrow$\,\fb{\textbf{Step 1}\\FFS, no swaps\\$\ps=15$}\,$\rightarrow$\,\fb{\textbf{Step 2}\\FFS, 20\% swaps\\$\ps=15$}\\[6pt]
+$\downarrow$\\[2pt]
+\fb{\textbf{Step 3}\\brute force $\ps=18$\\(the one you ran)}\,$\rightarrow$\,\fb{\textbf{Step 4}\\umbrella sampling\\$N=8000$, $\ps=15$}
+\end{center}
+
+For each step: \textbf{why $\rightarrow$ what they did $\rightarrow$ how it was measured $\rightarrow$ what they saw $\rightarrow$ what it led to.}
+
+\subsection{Step 0 \quad Plain brute force at $\ps=15$}
+\begin{itemize}
+\item \textbf{Why:} try the simplest thing first.
+\item \textbf{Did:} ordinary NpT MC for $3\times10^{6}$ MC cycles at $\Ts=1$, $\ps=15$, starting from the metastable liquid.
+\item \textbf{Saw:} \textbf{no spontaneous nucleation.}
+\item \textbf{Led to:} nucleation at $\ps=15$ is too rare for brute force, so a rare-event method is needed.
+\end{itemize}
+
+\subsection{Step 1 \quad Nucleation rate by FFS, no swaps ($\ps=15$)}
+\begin{itemize}
+\item \textbf{Why:} get the real rate and see which crystal forms.
+\item \textbf{Method} (paper Eqs.~3--4). The rate is a product of two factors:
+\begin{equation*}
+\phi_{l\to s}=\phi_{l\to J}\;P_{J\to s},\qquad
+P_{J\to s}=P_{J\to K}\,P_{K\to L}\cdots P_{N\to s}.
+\end{equation*}
+\begin{enumerate}
+\item $\phi_{l\to J}$: how often fluctuations in the liquid create a small crystalline cluster of $J=5$ particles. It comes from an ordinary long kinetic-MC run with \textbf{dr $=0.01\sigma$}.
+\item $P_{J\to s}$: the probability that a 5-particle cluster grows to a bulk solid instead of dissolving. Each factor $P_{J\to K}$ is estimated by launching many short trajectories from stored configurations at cluster size $J$ and counting the fraction that reach size $K$ before the cluster dissolves. The successful ones become the starting points for the next interface. Trajectories from the same configuration differ only by the random seed, with \textbf{dr $=0.04\sigma$}. FFS only works when the dynamics are not deterministic; the seed makes them stochastic.
+\end{enumerate}
+\item \textbf{Reaction coordinate:} $n$ = number of particles in the largest solid cluster. It separates liquid from solid but is \emph{blind to the crystal structure}: every particle in disordered fcc \emph{or} CsCl counts as crystalline, while in the metastable liquid fewer than 5 of 1000 do.
+\item \textbf{Saw} (numbers checked on the PDF, p.\,3):
+\end{itemize}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Quantity & Value & Note\\
+\midrule
+$P_{5\to s}$ & $10^{-28\pm2}$ & growth probability of a 5-particle cluster\\
+$\phi_{l\to5}$ & $10^{-4\pm1}\,D_0\sigma^{-5}$ & $D_0$: diffusion coefficient at infinite dilution\\
+Nucleation rate $\phi_{l\to s}$ & $10^{-32\pm3}\,D_0\sigma^{-5}$ & exponents add: $-4+(-28)=-32$\\
+Critical nucleus $n^{*}$ & $120\pm15$ & size with 50\% chance to redissolve\\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Structure of the growing cluster:} they compute $g(r)$ of \emph{only the particles in the cluster} and compare with bulk disordered-fcc and bulk CsCl curves (Fig.~2a, an 80-particle cluster). It matches \textbf{fcc-like}, even though the stable solid at $\Ts=1$ is CsCl (the paper writes ``$\ps=1$'', an apparent typo for 15).
+\item \textbf{Led to:} the nucleus is the \emph{metastable} phase, not the stable one. This looks like Ostwald's step rule, which ST explains by ``the fcc barrier is lower''. That claim needs testing.
+\end{itemize}
+
+\subsection{Step 2 \quad Repeat FFS with 20\% swap moves ($\ps=15$)}
+\begin{itemize}
+\item \textbf{Why:} a direct test of the quasi-equilibrium assumption. If clusters are already in equilibrium, adding moves that only help them rearrange cannot change what they look like.
+\item \textbf{Did:} same FFS, but the kinetic MC also has a \textbf{swap} trial move (exchange a $+$ and a $-$ particle). It is unphysical for colloids but removes the charge-ordering bottleneck.
+\item \textbf{Saw:}
+\end{itemize}
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+ & No swaps (Step 1) & 20\% swaps (Step 2)\\
+\midrule
+Cluster structure & disordered fcc-like & charge-ordered CsCl\\
+Critical nucleus $n^{*}$ & $120\pm15$ & $65\pm15$\\
+$P_{5\to s}$ & $10^{-28\pm2}$ & $10^{-15\pm1}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Led to:} the nucleation pathway \emph{changes} when sampling is improved, so \textbf{local equilibrium is not established in the natural (no-swap) dynamics.} That contradicts the key assumption of ST. Their explanation: the cluster grows too fast to explore its configurations and gets kinetically trapped in a metastable structure.
+\end{itemize}
+
+\subsection{Step 3 \quad Check at $\ps=18$ with no rare-event method (the step you reproduced)}
+\begin{itemize}
+\item \textbf{Why:} show that the effect is not an artifact of FFS.
+\item \textbf{Did:} at $\ps=18$ the probability of forming a post-critical nucleus is higher, so no FFS is needed. They ran plain kinetic MC and a Brownian dynamics simulation.
+\item \textbf{Saw:} kinetic MC \textbf{without swaps} forms a \textbf{substitutionally disordered fcc} lattice; Brownian dynamics gives the \textbf{same}; \textbf{with swaps} the liquid becomes a \textbf{substitutionally ordered} lattice.
+\item \textbf{Led to:} the same phenomenon, now seen directly. It also supports MC as a stand-in for real colloid dynamics.
+\end{itemize}
+\begin{warnbox}
+\textbf{No numbers are given for this step:} no cluster sizes, times, $N$, dr or vmax. Your target here is therefore \emph{qualitative}.
+\end{warnbox}
+
+\subsection{Step 4 \quad Free-energy barriers by umbrella sampling ($\ps=15$, $N=8000$)}
+\begin{itemize}
+\item \textbf{Why:} Steps 1--3 show which crystal forms. To contradict ST you must also show that the \emph{other} crystal has the lower barrier.
+\item \textbf{Method:} umbrella sampling holds the system near each value of $n$ in turn and assembles the free energy $\Delta G(n)$. (The paper only says it ``determines the variation of the free energy with a reaction coordinate''; the bias and the reweighting are not described.)
+\item \textbf{Done twice:}
+\begin{enumerate}
+\item \emph{No swaps:} CsCl clusters grow very slowly; fcc clusters form and persist. If the run is long enough, fcc clusters eventually turn into CsCl.
+\item \emph{With swaps:} clusters grow directly in their lowest-free-energy state (CsCl).
+\end{enumerate}
+\item \textbf{Saw} (Fig.~3a, \emph{approx.}\ read from the plot):
+\end{itemize}
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+ & CsCl & Disordered fcc\\
+\midrule
+Barrier $\Delta G^{*}/\kT$ & $\approx20$--$22$ & $\approx31$--$32$\\
+$n$ at the maximum & $\approx60$--$100$ & $\approx120$--$140$\\
+\bottomrule
+\end{tabular}
+\end{center}
+The disordered critical cluster is \emph{bigger} than the ordered one (snapshots, Fig.~3b,c).
+The authors warn that a barrier height can depend on the choice of reaction coordinate, whereas the rate is a true observable.
+
+%--------------------------------------------------------------------
+\section{How the argument is stitched together}
+
+\begin{enumerate}
+\item \textbf{Step 1:} without swaps, \textbf{fcc-like} nuclei form (rate $\approx10^{-32}D_0\sigma^{-5}$).
+\item \textbf{Step 4:} the \textbf{CsCl} nucleus has the \textbf{lower} barrier. So the system nucleates the phase with the \emph{higher} barrier. That alone already contradicts ST.
+\item \textbf{Step 2:} with swaps the nucleus is CsCl and nucleation is far easier. Therefore the no-swap system was \emph{not} exploring all structures during nucleation: it is \textbf{out of equilibrium}.
+\item \textbf{Step 3:} plain MC and Brownian dynamics at $\ps=18$ show the same, so it is not an FFS artifact.
+\item \textbf{Mechanism (their interpretation), ``self-poisoning'':} small fcc clusters grow so fast that they never become CsCl. An fcc cluster would have to nearly redissolve before a CsCl one could form, so the early success of fcc blocks the more stable CsCl.
+\item \textbf{Why CNT is not rescued by $\Gamma$:} attachment and detachment rates are about the same for fcc and CsCl clusters, so a large prefactor cannot compensate for the higher barrier.
+\end{enumerate}
+
+\begin{keybox}
+\textbf{Headline:} the phase that crystallizes first is not the one with the lowest barrier, because sub-critical nuclei are not in quasi-equilibrium.
+\end{keybox}
+
+%--------------------------------------------------------------------
+\section{Measurement techniques in detail}
+
+\subsection{Cluster size $n$}
+``The number of particles in the largest solid cluster'', citing ref.\ [18]. It is structure-blind (fcc and CsCl particles both count).
+The thresholds are not in this paper. Your q6 script implements a bond-orientational version of this idea with its own parameter values. The comparison with the reference is the subject of the next note (\texttt{04\_cluster\_size\_comparison}, not yet written; it needs the ref.\ [18] PDF).
+
+\subsection{Critical nucleus}
+The size at which a cluster has a 50\% chance to shrink and 50\% to grow. Measured by launching trajectories from clusters of a given size and counting how many redissolve: $120\pm15$ without swaps, $65\pm15$ with 20\% swaps.
+
+\subsection{FFS rate}
+Rate $=$ (flux to the first interface) $\times$ (product of interface-to-interface probabilities). The errors are quoted on the exponent ($\pm2$ on the probability, $\pm3$ on the rate), so the numbers are good to orders of magnitude only.
+
+\subsection{Crystal structure from $g(r)$}
+$g(r)$ of the cluster particles only, compared with the two bulk curves (the cluster curve is multiplied by 20 to be visible).
+\begin{itemize}
+\item A small cluster is mostly surface, so its $g(r)$ is noisy.
+\item The total $g(r)$ cannot separate \emph{disordered} from \emph{ordered} fcc, nor fcc from hcp. The word ``disordered'' rests on the dynamics (without swaps charges cannot rearrange), not on a measurement shown in the paper.
+\end{itemize}
+
+\subsection{Free-energy barrier}
+The $\Delta G(n)$ curve from umbrella sampling; the barrier is its maximum (Fig.~3a).
+
+\subsection{Time and rate units}
+Rates are in $D_0\sigma^{-5}$ (per volume per time, hydrodynamics ignored). There is no calibration of MC cycles to physical time, so cycles at different dr are not comparable.
+
+%--------------------------------------------------------------------
+\section{Map to your work}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{7.6cm} X@{}}
+\toprule
+\textbf{Paper step} & \textbf{In your project}\\
+\midrule
+Model, NpT MC, $N=1000$, $\Ts=1$, $\kappa\sigma=6$, $r_c=3.5\sigma$, 1 volume move per cycle & \done\\
+Step 3, no-swap half (brute force $\ps=18$) & \done: two branches, dr $=0.01$ and $0.04$, $3\times10^{6}$ cycles each; only dr $=0.04$ nucleated\\
+Step 3, swap half; Brownian dynamics & \notdone{} (no swap move in the code)\\
+Step 0 ($\ps=15$ brute force) & \notdone\\
+Steps 1, 2 (FFS) & \notdone{} (deliberate choice)\\
+Step 4 (umbrella sampling) & \notdone\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+%--------------------------------------------------------------------
+\section{If you redo it: checklist}
+
+\begin{enumerate}
+\item Prepare a liquid at $\Ts=1$, $\ps=18$. Your validated parent is \texttt{4\_Clean\_NoSwap\_Replication/\allowbreak common/\allowbreak validated\_parent\_\allowbreak N1000\_T1\_P18.res} ($\eta\approx0.543$).
+\item Run kinetic NpT MC with 1000 displacement moves $+$ 1 volume move per cycle, no swaps, at the dr you choose. The paper gives 0.01 and 0.04 for specific roles but not for this run.
+\item Choose vmax. The paper does not state it; it changes the dynamics, not the NpT equilibrium.
+\item Compute the cluster size with a \emph{structure-blind} criterion (see \texttt{04\_...} once written). A PTM ``FCC/HCP only'' count excludes bcc and would miss a CsCl nucleus.
+\item A nucleation event looks like $n$ growing steadily far beyond about 100 particles and never returning to near zero.
+\item Check the nucleus structure: total $g(r)$ as in Fig.~2, and ideally $g(r)$ split by charge to see whether charges are random (disordered fcc) or ordered (CsCl).
+\item Repeat with more seeds if you want any statistics. The paper gives none for $\ps=18$.
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\section{Glossary}
+
+\small
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}l X@{}}
+\toprule
+Term & Meaning\\
+\midrule
+NpT MC & Monte Carlo at constant particle number, pressure, temperature (moves: particle displacement and volume change)\\
+MC cycle & here: 1000 displacement attempts $+$ 1 volume attempt\\
+dr & maximum displacement per particle move (in $\sigma$); sets the speed of the dynamics\\
+vmax & maximum change of $\ln V$ in a volume move; an algorithmic parameter\\
+ST & Stranski--Totomanow conjecture (the lowest-barrier phase nucleates)\\
+CNT & classical nucleation theory, $R=\Gamma e^{-\Delta G_{\rm crit}/\kT}$\\
+FFS & forward-flux sampling, a rare-event rate method\\
+Umbrella sampling & biased sampling used to compute free-energy profiles\\
+Disordered fcc & positions on an fcc lattice, charges assigned randomly\\
+CsCl & positions on a bcc lattice with alternating charges (ordered)\\
+Swap move & exchange of a $+$ and a $-$ particle; unphysical for colloids\\
+Ostwald step rule & a metastable phase forms first and later transforms to the stable one\\
+q6, PTM, CNA & structure-detection tools used in the simulations; see \texttt{04\_...}\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\end{document}

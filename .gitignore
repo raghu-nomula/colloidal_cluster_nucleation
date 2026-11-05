@@ -1,0 +1,36 @@
+# Large simulation output stays on the owner's PC (see docs/DATA.md).
+# A few tiny snapshot files are tracked on purpose (results/example_frames and some
+# small test frames); they were added with "git add -f".
+*.lammpstrj
+!results/example_frames/*.lammpstrj
+
+# Compiled code: rebuild with "make" (see docs/REPRODUCE.md)
+*.o
+*.mod
+simulations/Source/mc_npt
+simulations/Block/block
+simulations/Run/run
+simulations/4_Clean_NoSwap_Replication/common/mc_npt_phase1
+**/production_3M_seg*/mc_npt
+**/runs/**/mc_npt
+
+# Run bookkeeping that only makes sense on the machine that ran the job
+*.pid
+
+# Python / LaTeX / editor leftovers
+__pycache__/
+*.pyc
+*.aux
+*.out
+*.toc
+*.synctex.gz
+.ipynb_checkpoints/
+.vscode/
+.DS_Store
+
+# Never commit copyrighted material or credentials
+*.pem
+*.key
+id_*
+.env
+docs/private/

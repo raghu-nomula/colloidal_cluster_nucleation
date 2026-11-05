@@ -1,0 +1,230 @@
+\documentclass[10.5pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.1cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+
+\definecolor{accent}{HTML}{1F4E79}
+\definecolor{soft}{HTML}{EAF1F8}
+\definecolor{warn}{HTML}{FFF4E0}
+\definecolor{warnline}{HTML}{C77700}
+
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{0pt}{1.5em plus .3em minus .2em}{0.5em}{\Large\bfseries\color{accent}}}
+\renewcommand\subsection{\@startsection{subsection}{2}{0pt}{1.2em plus .2em minus .1em}{0.4em}{\large\bfseries\color{accent}}}
+\makeatother
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\renewcommand{\arraystretch}{1.25}
+\let\olditemize\itemize\renewcommand\itemize{\olditemize\setlength\itemsep{0.15em}\setlength\topsep{0.3em}}
+\let\oldenumerate\enumerate\renewcommand\enumerate{\oldenumerate\setlength\itemsep{0.15em}\setlength\topsep{0.3em}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Cluster-size method: paper vs.\ your analysis}
+\fancyhead[R]{\small page \thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+\newsavebox{\mybox}
+\newenvironment{keybox}{\par\medskip\noindent\begin{lrbox}{\mybox}\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}}{\end{minipage}\end{lrbox}\noindent\fcolorbox{accent}{soft}{\usebox{\mybox}}\par\medskip}
+\newenvironment{warnbox}{\par\medskip\noindent\begin{lrbox}{\mybox}\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}}{\end{minipage}\end{lrbox}\noindent\fcolorbox{warnline}{warn}{\usebox{\mybox}}\par\medskip}
+
+\newcommand{\Ts}{T^{*}}
+\newcommand{\ps}{p^{*}}
+\newcommand{\same}{\textcolor{green!45!black}{\textbf{same}}}
+\newcommand{\diff}{\textcolor{red!70!black}{\textbf{different}}}
+\newcommand{\unk}{\textcolor{warnline}{\textbf{not stated}}}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries\color{accent} How the cluster size is measured\\[2pt]}
+{\large The paper's method (ref.\ [18]) compared with what you did}\\[4pt]
+\small ten Wolde, Ruiz-Montero, Frenkel, \emph{J.\ Chem.\ Phys.} \textbf{104}, 9932 (1996), Sec.~III.A and Appendix~A\\
+versus \texttt{analyze\_q6\_cluster.py} and the OVITO PTM/CNA analysis
+\end{center}
+
+\begin{keybox}
+\textbf{Why this matters.} The cluster size $n$ is the only quantity that tells you whether a nucleus formed and how big it is: it is the paper's reaction coordinate, and the number you quote (``critical nucleus $\approx120$'') is only meaningful together with the definition behind it.
+\end{keybox}
+
+%--------------------------------------------------------------------
+\section{Summary (read this first)}
+
+\begin{enumerate}
+\item The Sanz et al.\ paper does \textbf{not} define its cluster criterion; it only cites ref.\ [18]. Ref.\ [18] is a Lennard-Jones paper, and its method is the \textbf{q6 bond-order criterion}. Your script follows the same recipe.
+\item Your script \textbf{differs from ref.\ [18] in two parameters}, and the difference is in the same direction (yours is stricter):
+\begin{itemize}
+\item dot-product threshold: \textbf{0.70} (yours) vs.\ \textbf{0.5} (paper)
+\item cluster-joining rule: yours additionally requires the bond between two solid-like particles to be ``connected'' ($>0.70$); the paper joins any two solid-like \emph{neighbours}.
+\end{itemize}
+The other numbers are the same or close (see the table in section~3).
+\item On your own data the result is \textbf{sensitive to these thresholds}: one trajectory gave a peak largest cluster of 70, 55 or 40 depending on the setting (section~4). So absolute cluster sizes cannot be compared with the paper's 120 or 65 unless the definition matches.
+\item The clean-campaign analysis (PTM/CNA) is a \textbf{different kind of quantity}: it counts only fcc/hcp particles, excludes bcc, so it is structure-sensitive. The paper's $n$ is structure-blind and would also count a CsCl nucleus.
+\item \textbf{Recommendation (corrected after the re-analysis in note 06):} the ref.\ [18] thresholds (0.5, 1.5) call about 54 of 1000 particles solid-like in this liquid, against the paper's ``less than five'', so they are \emph{not} usable unchanged. Your stricter settings (0.70, 1.45) give about 1 and fit the paper. Calibrate the thresholds on the liquid first, state them with every cluster size, and keep PTM to \emph{identify the structure}, not to define $n$ (section~6).
+\end{enumerate}
+
+%--------------------------------------------------------------------
+\section{The paper's method, step by step (ref.\ [18])}
+
+All quotes and numbers below are from the PDF you provided.
+
+\subsection*{Step 1: neighbours and bond orientations}
+For each particle $i$, the neighbours are all particles $j$ within a radius $r_q$. The vectors $\mathbf r_{ij}$ are ``bonds'', with unit vectors $\hat{\mathbf r}_{ij}$ and angles $(\theta_{ij},\phi_{ij})$. \textbf{$r_q=1.5\,\sigma$}, chosen ``approximately [at] the first minimum of $g(r)$ in a fcc crystal at coexistence'' (Lennard-Jones, so this value belongs to that system).
+
+\subsection*{Step 2: local order vector (Eq.~A1)}
+\begin{equation}
+\bar q_{lm}(i)=\frac{1}{N_b(i)}\sum_{j=1}^{N_b(i)}Y_{lm}(\hat{\mathbf r}_{ij}),\qquad l=6,\; m=-6,\dots,6.
+\end{equation}
+This is a 13-component complex vector for each particle, the average of the spherical harmonics over its bonds.
+
+\subsection*{Step 3: normalise (Eq.~15)}
+\begin{equation}
+\tilde q_{6m}(i)=\frac{\bar q_{6m}(i)}{\bigl[\sum_{m=-6}^{6}|\bar q_{6m}(i)|^{2}\bigr]^{1/2}},\qquad\text{so}\quad \mathbf q_6(i)\cdot\mathbf q_6(i)=1.
+\end{equation}
+
+\subsection*{Step 4: connect neighbours (Eq.~16)}
+\begin{equation}
+\mathbf q_6(i)\cdot\mathbf q_6(j)=\sum_{m=-6}^{6}\tilde q_{6m}(i)\,\tilde q_{6m}(j)^{*}.
+\end{equation}
+Particles $i$ and $j$ are \textbf{connected} if this dot product exceeds a threshold, \textbf{0.5} in the paper.
+
+\subsection*{Step 5: decide who is solid-like}
+A single connection is not enough: ``even in the liquid it will frequently happen that the bond-order of neighbouring particles is in phase''. A particle is therefore solid-like if its \textbf{number of connections exceeds a threshold}; they use \textbf{seven}. Calibration (Lennard-Jones, Fig.~2 of ref.\ [18]): with this threshold more than 99\% of fcc particles, more than 97\% of bcc particles and less than 1\% of liquid particles are classed as solid-like. (The text says ``threshold value of seven'' and ``exceeds''; whether the test is $\ge7$ or $>7$ is not stated precisely.)
+
+\subsection*{Step 6: build clusters}
+``Any two solid-like particles that are neighbours belong to the same solid cluster.'' The cluster size $n$ is the number of particles in the largest cluster.
+
+\begin{warnbox}
+\textbf{Properties worth remembering.} The method is local (per particle), uses \emph{no} information about particle type, and is \emph{``rather insensitive to the crystal structure of the cluster''} (their words). That is why the Sanz paper can say that disordered fcc and CsCl particles both count as crystalline.
+The smooth weight $a(r)$ of Eq.~A6 is only needed for constraint molecular dynamics; for MC it is not used.
+\end{warnbox}
+
+\subsection*{What the Sanz paper adds}
+Only two statements: at $\Ts=1$, $\ps=15$ every particle in disordered fcc \emph{or} CsCl is identified as crystalline, and in the metastable liquid ``less than five out of 1000 particles'' are. \textbf{It does not say whether the thresholds of ref.\ [18] were re-tuned for the binary Yukawa system.} That is the one thing neither document tells you.
+
+%--------------------------------------------------------------------
+\section{What you did, side by side}
+
+Your q6 analysis is \texttt{analyze\_q6\_cluster.py} (identical copies in \texttt{1\_step\_50K}, \texttt{4\_step\_1.5M\_to\_3.5M} and \texttt{3\_Tests\_for\_codes/1\_test\_q6\_py\_code}). The command stored in \texttt{cluster\_analyze\_py} is\\
+\texttt{python3 analyze\_q6\_cluster.py traj.lammpstrj -{}-rcut 1.45 -{}-dot 0.70 -{}-min-solid-bonds 7}.
+
+\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{3.7cm} >{\raggedright\arraybackslash}p{4.4cm} c@{}}
+\toprule
+\textbf{Ingredient} & \textbf{Ref.\ [18]} & \textbf{Your q6 script} & \textbf{Match?}\\
+\midrule
+\endhead
+Bond-order degree $l$ & 6 & 6 & \same\\
+Local vector & average of $Y_{6m}$ over bonds (A1) & mean of $Y_{6m}$ over neighbours & \same\\
+Normalisation & unit vector (Eq.~15) & normalised to unit length & \same\\
+Dot product & $\sum\tilde q\,\tilde q^{*}$ (Eq.~16) & real part of the vector product & \same\\
+Neighbour cutoff $r_q$ & $1.5\,\sigma$ (first minimum of $g(r)$, LJ fcc) & $1.45\,\sigma$ & close\\
+\textbf{Connection threshold} & \textbf{0.5} & \textbf{0.70} & \diff\\
+Connections for ``solid-like'' & 7 & $\ge7$ & \same\\
+\textbf{Cluster joining} & any two neighbouring solid-like particles & solid-like \emph{and} bond dot product $>0.70$ & \diff\\
+Particle types & ignored (single species) & ignored (type not used) & \same\\
+Thresholds tuned on & LJ fcc/bcc/liquid at coexistence & not recorded & \unk\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\textbf{Direction of the effect.} A higher connection threshold (0.70 vs.\ 0.5) means fewer bonds count as connected, so fewer particles reach 7 connections, and the extra joining condition removes some links between solid-like particles. Both make your clusters \emph{smaller or equal} to what the paper's criterion would give on the same configuration. (This is expected from the definitions; I have \emph{not} measured it on your data.)
+
+\textbf{Is the cutoff sensible for your system?} Simple geometry (my estimate, not a simulation result): at the density of your liquid parent, $\rho\sigma^{3}\approx1.037$, an fcc lattice has a nearest-neighbour distance of about $1.11\,\sigma$ and a second shell at about $1.57\,\sigma$, so a first-shell cutoff between them such as 1.45 is reasonable. A bcc lattice at the same density has shells at about $1.08\,\sigma$ and $1.25\,\sigma$, so with 1.45 both shells fall inside the cutoff (about 14 neighbours) -- different from fcc's 12. The paper's value of 1.5 was fixed for fcc LJ; for a CsCl crystal the right cutoff is not obvious.
+
+\subsection*{The PTM/CNA analysis in the clean campaign}
+\texttt{analyze\_campaign.py} and \texttt{ovito\_structure.py} do something different:
+\begin{enumerate}
+\item OVITO classifies each particle (PTM with RMSD cutoff 0.10, and adaptive CNA) as fcc, hcp, bcc, icosahedral, sc or other.
+\item The reported ``largest FCC/HCP cluster'' joins \textbf{fcc and hcp particles only} that are within $1.45\,\sigma$ of each other.
+\end{enumerate}
+So this count (i) \textbf{excludes bcc} and therefore would not count a CsCl nucleus, and (ii) depends on how well PTM recognises thermally distorted small clusters. It is very good at \emph{naming a structure} and weaker as a structure-blind \emph{size} measure. Your own notes already say PTM/CNA ``can miss very small or strongly distorted embryos'' (\texttt{KNOWN\_LIMITATIONS.md}, item 4).
+
+%--------------------------------------------------------------------
+\section{Evidence from your own data}
+
+\subsection*{4.1 Does your criterion call the liquid liquid? (paper: $<5$ of 1000)}
+Particles classed as solid-like per saved frame, default settings (from the \texttt{cluster\_size.dat} files):
+
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Run & Frames & Mean solid-like & Max solid-like\\
+\midrule
+\texttt{1\_step\_50K} & 51 & 1.4 & 5\\
+\texttt{2\_step\_50K\_to\_500K} & 451 & 1.3 & 6\\
+\texttt{3\_step\_500K\_to\_15000K} & 1001 & 2.1 & 13\\
+\bottomrule
+\end{tabular}
+\end{center}
+In the early liquid this matches the paper's statement (fewer than 5 per 1000, on average about 1). Later in run 3 a few frames exceed that because a small cluster is starting to form.
+
+\subsection*{4.2 How much do the thresholds change the answer?}
+Same trajectory (\texttt{4\_step\_1.5M\_to\_3.5M}: $N=1000$, $\Ts=1$, $\ps=18$, dr $=0.01$, vmax $=0.005$, seed 68593, $2\times10^{6}$ cycles from the 1.5M configuration), three analyses:
+
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Setting & rcut / dot / min.\ bonds & Peak largest cluster & Peak at cycle\\
+\midrule
+Default & 1.45 / 0.70 / 7 & \textbf{70} & 1.946M\\
+Stricter bonds & 1.45 / 0.75 / 7 & 40 & 1.976M\\
+More connections & 1.45 / 0.70 / 8 & 55 & 1.976M\\
+\bottomrule
+\end{tabular}
+\end{center}
+Largest cluster along the default analysis at 0, 0.25, 0.5, \dots, 2.0M cycles: 1, 1, 5, 3, 6, 8, 16, 21, 41.
+
+\begin{keybox}
+\textbf{Take-away.} On one and the same trajectory the peak cluster size moves between 40 and 70 depending on the threshold, i.e.\ by a factor of about 1.75. Numbers like ``120'' or ``65'' from the paper can only be compared to yours if the definition is the same. \emph{Trends} (growth, plateau) are robust; \emph{absolute sizes} are not.
+\end{keybox}
+
+\subsection*{4.3 The unexplained difference between your two eras}
+
+\begin{center}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{3.8cm}@{}}
+\toprule
+ & \texttt{2\_1000\_atoms} (June) & \texttt{4\_Clean}, dr $=0.01$ & \texttt{4\_Clean}, dr $=0.04$\\
+\midrule
+dr & 0.01 & 0.01 & 0.04\\
+vmax & \textbf{0.005} & 0.0005 & 0.0005\\
+Start & ramp-prepared liquid, density label 1.044 & validated parent ($\rho=1.037$) & same parent\\
+Cluster measure & q6 (0.70 / 7) & PTM fcc+hcp & PTM fcc+hcp\\
+Largest cluster & $\approx70$ & $\le13$ & $\approx500$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{The two dr $=0.01$ results disagree (70 vs.\ 13), but I cannot say why.} Four things changed at once: the cluster measure, vmax (10$\times$), the starting configuration and the random seed. The data on disk do not separate them. What the notes do record: \texttt{PHASE\_02\_LIQUID\_VALIDATION.md} says the earlier q6 analysis ``was not trusted because an apparent cluster was not obvious during visual inspection'', which is why the clean campaign switched to PTM/CNA. You had marked those frames (\texttt{marked\_1946000.lammpstrj}, \texttt{marked\_1976000\_dot075.lammpstrj}), but I found no structural analysis (for example PTM) of them. So the 70-particle cluster is best read as \emph{not confirmed as a crystal}: it may have been a locally ordered liquid fluctuation that the q6 criterion counted.
+
+%--------------------------------------------------------------------
+\section{What is unknown}
+
+\begin{itemize}
+\item Whether Sanz et al.\ re-tuned the ref.\ [18] thresholds (0.5, 7, $r_q=1.5$) for the binary Yukawa system. Not stated in either paper.
+\item Whether ``7 connections'' means $\ge7$ or $>7$ in ref.\ [18].
+\item What the best cutoff is for CsCl/bcc crystals in your system.
+\item Why the June q6 run (70) and the clean PTM run (13) differ at dr $=0.01$.
+\item Whether the June 70-particle cluster was a real crystal: it was distrusted after visual inspection, but no PTM/CNA of those frames is recorded.
+\end{itemize}
+
+%--------------------------------------------------------------------
+\section{Recommendation}
+
+\begin{enumerate}
+\item \textbf{Use the ref.\ [18] \emph{method} but calibrate the thresholds on the liquid.} Note 06 shows that its LJ values (0.5, 1.5) over-count in this system (about 54 false solid-like particles per 1000); require fewer than 5 in the validated liquid, as the paper does. Your 0.70 / 1.45 / 7 satisfies this. State all the numbers whenever you quote a cluster size.
+\item \textbf{Keep a second setting (for example 0.75 or 8 bonds) as a sensitivity check}, so that you can say how much $n$ depends on the definition. That is the 40--70 spread in section~4.2.
+\item \textbf{Use PTM/CNA to name the structure} (fcc/hcp/bcc fractions in the nucleus), not to define $n$. Add a charge-resolved analysis to test ``disordered'' versus ``ordered''.
+\item \textbf{Say in the meeting} that absolute cluster sizes are definition-dependent and that your replication target at $\ps=18$ is qualitative (the paper gives no cluster sizes there).
+\end{enumerate}
+
+\begin{warnbox}
+\textbf{One optional step that needs your OK.} To close the gaps in section~5 I would re-analyse \emph{existing} trajectories (no simulation): run your script with the ref.\ [18] settings on the June trajectory and on the dr $=0.04$ clean-campaign trajectories, and put the q6 size next to the PTM size frame by frame. This is post-processing only, but it is a computation on your data, so I have not done it.
+\end{warnbox}
+
+\end{document}

@@ -1,0 +1,133 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Yukawa Potential, Reduced Units, and System Setup</title>
+<style>
+@page { size:A4; margin:18mm 20mm; }
+body { font-family:"DejaVu Serif",serif; color:#17212b; line-height:1.38; font-size:10.5pt; }
+h1 { color:#173b57; text-align:center; font-size:24pt; margin:24mm 0 4mm; }
+h2 { color:#175d7a; font-size:16pt; border-bottom:1px solid #9bb9c8; padding-bottom:2mm; margin-top:8mm; }
+h3 { color:#2b647b; font-size:12.5pt; margin-top:6mm; }
+.subtitle,.date { text-align:center; color:#47606f; }.subtitle{font-size:14pt}.date{margin:4mm 0 14mm}
+.abstract,.warning,.key { padding:4mm 5mm; background:#eef6fa; border-left:4px solid #3183a7; margin:5mm 0; }
+.warning { background:#fff5e6; border-color:#d9822b; }.key{background:#eef8ef;border-color:#4d9652}
+.eq { text-align:center; font-family:"DejaVu Serif",serif; font-size:12pt; margin:4mm 0; }
+.cases { margin:2mm auto; border-collapse:collapse; }.cases td{padding:1mm 4mm;border:0}
+table.data { width:100%; border-collapse:collapse; margin:4mm 0; }
+table.data th { background:#dfeef5; color:#173b57; } table.data td,table.data th{border:1px solid #9bb9c8;padding:2mm 3mm;vertical-align:top}
+code { font-family:"DejaVu Sans Mono",monospace; background:#eef1f3;padding:0 .7mm; }
+pre { font-family:"DejaVu Sans Mono",monospace;background:#f2f4f5;border:1px solid #cbd3d8;padding:3mm; }
+.page { page-break-before:always; }.small{font-size:9pt;color:#526572}
+</style></head><body>
+<h1>Yukawa Potential, Reduced Units,<br>and System Setup</h1>
+<div class="subtitle">Paper definition → Fortran implementation → <i>N</i> = 1000 inputs</div>
+<div class="date">Working note for the MC–NPT reconstruction · 8 July 2026</div>
+<div class="abstract"><b>Purpose.</b> This note derives the hard-core signed Yukawa model used by Sanz <i>et al.</i> (PRL 99, 055501, 2007), maps it to the present Fortran source, and gives the complete conversion between packing fraction, number density, volume, and box length. It also records which input values matter for a fresh configuration and which are overridden by a restart.</div>
+
+<h2>1. Physical model in the paper</h2>
+<p>The system is an equimolar binary mixture of monodisperse spheres. Every particle has diameter σ and charge magnitude <i>Ze</i>; the two types carry opposite signs. Define <i>s</i><sub>ij</sub> = +1 for equal charges (1–1 or 2–2) and −1 for opposite charges (1–2).</p>
+<div class="eq"><i>u</i><sub>ij</sub>(<i>r</i>)/(<i>k</i><sub>B</sub><i>T</i><sub>phys</sub>) =</div>
+<table class="cases">
+<tr><td>+∞</td><td><i>r</i> &lt; σ</td></tr>
+<tr><td><i>s</i><sub>ij</sub> [<i>Z</i>²λ<sub>B</sub> / {σ(1+κσ/2)²}] exp[−κ(<i>r</i>−σ)]/(<i>r</i>/σ)</td><td>σ ≤ <i>r</i> &lt; <i>r</i><sub>c</sub></td></tr>
+<tr><td>0</td><td><i>r</i> ≥ <i>r</i><sub>c</sub></td></tr>
+</table>
+<p>Here λ<sub>B</sub> = <i>e</i>²/(ε<sub>s</sub><i>k</i><sub>B</sub><i>T</i><sub>phys</sub>) is the Bjerrum length. For the electrolyte convention in the paper, κ = √(8πλ<sub>B</sub>ρ<sub>salt</sub>). The chosen model parameters are κσ = 6 and <i>r</i><sub>c</sub> = 3.5σ. The exponential is referenced to contact, <i>r</i> = σ.</p>
+
+<h2>2. Contact-energy scale and reduced variables</h2>
+<div class="eq">ε<sub>Y</sub> ≡ <i>k</i><sub>B</sub><i>T</i><sub>phys</sub> <i>Z</i>²λ<sub>B</sub> / [σ(1+κσ/2)²]</div>
+<p>The paper’s reduced temperature is the inverse contact coupling:</p>
+<div class="eq"><b><i>T</i>* = <i>k</i><sub>B</sub><i>T</i><sub>phys</sub>/ε<sub>Y</sub> = σ(1+κσ/2)²/(<i>Z</i>²λ<sub>B</sub>)</b></div>
+<p>Therefore βε<sub>Y</sub> = 1/<i>T</i>*. Increasing <i>T</i>* weakens the interaction in thermal units.</p>
+<p>With <i>r</i>* = <i>r</i>/σ, κ* = κσ, and <i>u</i>* = <i>u</i>/ε<sub>Y</sub>:</p>
+<table class="cases">
+<tr><td><i>u</i>*<sub>ij</sub>(<i>r</i>*) = +∞</td><td><i>r</i>* &lt; 1</td></tr>
+<tr><td><i>u</i>*<sub>ij</sub>(<i>r</i>*) = <i>s</i><sub>ij</sub> exp[−κ*(<i>r</i>*−1)]/<i>r</i>*</td><td>1 ≤ <i>r</i>* &lt; <i>r</i>*<sub>c</sub></td></tr>
+<tr><td><i>u</i>*<sub>ij</sub>(<i>r</i>*) = 0</td><td><i>r</i>* ≥ <i>r</i>*<sub>c</sub></td></tr>
+</table>
+<div class="eq">Metropolis exponent: −βΔ<i>U</i> = −Δ<i>U</i>*/<i>T</i>*</div>
+<p>The code stores <i>U</i>* and sets <code>BETA=1/TEMP</code>; consequently the input <code>TEMP</code> is <i>T</i>*.</p>
+<table class="data"><tr><th>Reduced quantity</th><th>Definition</th><th>Meaning in code</th></tr>
+<tr><td>ρ*</td><td>ρσ³ = <i>N</i>σ³/<i>V</i></td><td>input/output <code>rho</code></td></tr>
+<tr><td><i>p</i>*</td><td><i>p</i>σ³/ε<sub>Y</sub> = <i>pT</i>*σ³/(<i>k</i><sub>B</sub><i>T</i><sub>phys</sub>)</td><td>input <code>P</code></td></tr>
+<tr><td><i>V</i>*</td><td><i>V</i>/σ³</td><td><code>BOX**3</code></td></tr>
+<tr><td><i>L</i>*</td><td><i>L</i>/σ</td><td><code>BOX</code></td></tr></table>
+
+<div class="page"></div><h2>3. Exact map to the Fortran source</h2>
+<p>With <code>sig=1</code>, <code>kappa=6</code>, and <code>rc=3.5</code>, the actual finite interaction is</p>
+<div class="eq"><b><i>u</i>*<sub>ij</sub>(<i>r</i>) = <i>s</i><sub>ij</sub> exp[−6(<i>r</i>−1)]/<i>r</i>, &nbsp; 1 ≤ <i>r</i> ≤ 3.5.</b></div>
+<p><code>Source/ener.f</code> evaluates <code>pref=EXP(-KAPPA*(R-sigma))</code> and <code>En=Isign*pref/(R/sigma)</code>. Below σ it returns 10²⁰, effectively forbidding overlap; beyond <i>r</i><sub>c</sub> it returns zero. The production potential is truncated, not shifted: <code>tailco=.false.</code> and <code>shift=.false.</code>.</p>
+<h3>Charge sign, periodicity, and total energy</h3>
+<p><code>Source/eneri.f</code> chooses +1 when the particle types match and −1 otherwise, then applies the minimum-image convention in each Cartesian direction. <code>Source/toterg.f</code> sums each unordered pair once:</p>
+<div class="eq"><i>U</i>* = Σ<sub><i>i</i>&lt;<i>j</i></sub> <i>u</i>*<sub>ij</sub>(<i>r</i><sub>ij</sub>).</div>
+<p>A new lattice receives alternating type IDs, giving 500 particles of each type for <i>N</i>=1000. Restarts preserve each type explicitly.</p>
+<h3>Pair virial</h3>
+<div class="eq">−<i>r</i> d<i>u</i>*<sub>ij</sub>/d<i>r</i> = <i>s</i><sub>ij</sub>e<sup>−κ(<i>r</i>−σ)</sup>σ(κ+1/<i>r</i>)</div>
+<p>This is exactly the virial expression in <code>ener.f</code>. The sampled continuous estimator is</p>
+<div class="eq"><i>p</i>*<sub>continuous</sub> = ρ*<i>T</i>* + [Σ<sub><i>i</i>&lt;<i>j</i></sub>(−<i>r</i><sub>ij</sub>d<i>u</i>*<sub>ij</sub>/d<i>r</i><sub>ij</sub>)]/(3<i>V</i>*).</div>
+<div class="warning"><b>Pressure warning.</b> This estimator omits the discontinuous hard-core contact contribution. It is not the complete mechanical pressure. The imposed <i>p</i>* is nevertheless used correctly in the NpT acceptance rule.</div>
+<h3>Legacy Lennard–Jones names</h3>
+<pre>eps sig mass rc kappa
+1.0 1.0 1.0 3.5 6.0</pre>
+<p><code>eps</code>, <code>EPS4</code>, and <code>EPS48</code> are inherited Lennard–Jones names. The Yukawa energy routine does not multiply by <code>eps</code>. In current runs <code>eps=1</code> is a placeholder; the Yukawa energy unit is ε<sub>Y</sub>, and temperature enters through <code>BETA=1/TEMP</code>.</p>
+
+<h2>4. Packing fraction → density → volume → box</h2>
+<p>The volume of one diameter-σ sphere is πσ³/6. Therefore</p>
+<div class="eq"><b>η = <i>N</i>(πσ³/6)/<i>V</i> = (π/6)ρ*</b></div>
+<div class="key"><div class="eq"><b>ρ* = 6η/π &nbsp;&nbsp; | &nbsp;&nbsp; <i>V</i>* = <i>N</i>/ρ* = <i>N</i>π/(6η) &nbsp;&nbsp; | &nbsp;&nbsp; <i>L</i>* = [<i>N</i>π/(6η)]<sup>1/3</sup></b></div></div>
+<p>These are geometric conversions, independent of the pair potential. Changing <i>N</i> at fixed η changes <i>V</i> and <i>L</i>, but not ρ*.</p>
+
+<h3>Worked example: paper state, <i>N</i>=1000 and η=0.526</h3>
+<div class="eq">ρ* = 6(0.526)/π = 1.0045860008</div>
+<div class="eq"><i>V</i>* = 1000/1.0045860008 = 995.4349346</div>
+<div class="eq"><i>L</i>* = (995.4349346)<sup>1/3</sup> = 9.98475990</div>
+<p>A newly generated box at the paper’s quoted metastable-liquid packing fraction should therefore use <code>rho=1.004586</code>. Using <code>rho=0.526</code> would incorrectly treat packing fraction as number density and yield η≈0.2754.</p>
+<h3>Other useful conversions</h3>
+<table class="data"><tr><th>State</th><th>η</th><th>ρ*</th><th><i>V</i>* (<i>N</i>=1000)</th><th><i>L</i>*</th></tr>
+<tr><td>Paper coexistence liquid</td><td>0.471</td><td>0.8995437384</td><td>1111.674683</td><td>10.35919254</td></tr>
+<tr><td>Paper metastable liquid, <i>p</i>*=15</td><td>0.526</td><td>1.0045860008</td><td>995.434935</td><td>9.98475990</td></tr>
+<tr><td>Unit number density</td><td>0.523598776</td><td>1.0000000000</td><td>1000</td><td>10</td></tr>
+<tr><td>Validated present parent, <i>p</i>*=18</td><td>0.543014</td><td>1.03708035</td><td>964.24544</td><td>9.87936881</td></tr></table>
+<p>The present parent is denser because the clean reconstruction imposes <i>p</i>*=18, not the paper’s <i>p</i>*=15. In NpT, packing fraction is an output that fluctuates; it is not independently constrained.</p>
+
+<div class="page"></div><h2>5. How initialization really uses density</h2>
+<p><code>Source/readdat.f</code> initially calculates <i>L</i>*=(<i>N</i>/ρ*<sub>input</sub>)<sup>1/3</sup>, but subsequent behavior depends on <code>ibeg</code>.</p>
+<table class="data"><tr><th><code>ibeg</code></th><th>Configuration mode</th><th>What the density line does</th></tr>
+<tr><td>0</td><td>Generate a new lattice</td><td>The input ρ* determines the box.</td></tr>
+<tr><td>1</td><td>Normal restart</td><td>The restart box is retained. The code replaces the nominal density by <i>N</i>/<i>L</i>³. The density input does not rescale coordinates.</td></tr>
+<tr><td>2</td><td>Rescaled restart</td><td>The restart coordinates and box are deliberately rescaled to the requested input density.</td></tr></table>
+<div class="warning"><b>Current workflow.</b> Clean production uses <code>ibeg=1</code>. Thus the line <code>1000 1.0 1.0 18.0 'sc'</code> does <em>not</em> force ρ*=1. The restart box is authoritative, explaining why a run can start near ρ*=1.037.</div>
+<p>The NpT controls are <i>N</i>, <i>T</i>*, and <i>p</i>*. An initial η only constructs or rescales a starting box. Subsequent accepted volume moves change density.</p>
+
+<h2>6. NpT volume move in reduced units</h2>
+<p>The code proposes uniformly in logarithmic volume:</p>
+<div class="eq">ln <i>V</i>*<sub>n</sub> = ln <i>V</i>*<sub>o</sub> + (ξ−½)<code>Vmax</code>, &nbsp; 0≤ξ&lt;1</div>
+<p>All coordinates scale by (<i>V</i>*<sub>n</sub>/<i>V</i>*<sub>o</sub>)<sup>1/3</sup>. The acceptance exponent is</p>
+<div class="eq">−[Δ<i>U</i>*+<i>p</i>*Δ<i>V</i>*]/<i>T</i>* + (<i>N</i>+1) ln(<i>V</i>*<sub>n</sub>/<i>V</i>*<sub>o</sub>).</div>
+<p>The <i>N</i>+1 factor is appropriate because the proposal is uniform in ln <i>V</i>. The physical cutoff stays fixed at 3.5σ—it is not scaled with the box. A proposed box is rejected if <i>L</i>/2 ≤ <i>r</i><sub>c</sub>.</p>
+
+<h2>7. Current parameter map</h2>
+<table class="data"><tr><th>Quantity</th><th>Current value</th><th>Location</th></tr>
+<tr><td><i>N</i>, composition</td><td>1000; 500:500</td><td><code>fort.15</code>; types in restart</td></tr>
+<tr><td>σ, <i>T</i>*, <i>p</i>*</td><td>1, 1, 18</td><td><code>sig</code>, <code>temp</code>, <code>p</code></td></tr>
+<tr><td>κσ, <i>r</i><sub>c</sub>/σ</td><td>6, 3.5</td><td><code>kappa</code>, <code>rc</code></td></tr>
+<tr><td>tail correction, shift</td><td>off, off</td><td><code>.false. .false.</code></td></tr></table>
+
+<h2>8. LAMMPS convention and cross-check</h2>
+<p>Plain LAMMPS Yukawa uses <i>U</i><sub>ij</sub>=<i>A</i><sub>ij</sub>exp(−κ<i>r</i>)/<i>r</i>. Matching the contact-referenced Fortran form requires</p>
+<div class="eq"><b><i>A</i><sub>ij</sub> = <i>s</i><sub>ij</sub> σ exp(κσ).</b></div>
+<p>For σ=1 and κ=6, |<i>A</i>|=e⁶=403.4287934927351: positive for like types and negative for unlike types. Plain LAMMPS Yukawa has no hard core, so first verify that no pair has <i>r</i>&lt;σ.</p>
+
+<h2>9. What was modified in the source</h2>
+<ol><li><code>ener.f</code> evaluates the signed, contact-referenced Yukawa pair energy and analytic virial.</li>
+<li><code>eneri.f</code> obtains the sign from particle types and applies minimum-image distances.</li>
+<li><code>readdat.f</code> reads κ; <code>mcvol.f</code> keeps <i>r</i><sub>c</sub> fixed during volume moves.</li>
+<li>Lennard–Jones tail correction and energy shifting are disabled.</li>
+<li>Types are preserved in restart and trajectory output.</li>
+<li>New metrics record η=πρ*/6 explicitly.</li></ol>
+<p>The later clean-replication instrumentation did not rewrite the pair potential or NpT acceptance physics; it added validation, provenance, and clearer diagnostics.</p>
+
+<h2>10. Audit checklist</h2>
+<ol><li>Restart has 1000 particles and exactly 500 of each type.</li><li>Compute ρ*=<i>N</i>/<i>L</i>³ and η=πρ*/6 from its first-line box.</li><li><code>fort.25</code> contains <code>1 1 1 3.5 6</code>, shift off, tail correction off.</li><li>Confirm <i>L</i>/2&gt;3.5 and no pair has <i>r</i>&lt;1.</li><li>Remember: <code>ibeg=1</code> uses the restart density, not the nominal density line.</li></ol>
+
+<h2>Reference</h2><p>E. Sanz, C. Valeriani, D. Frenkel, and M. Dijkstra, “Evidence for Out-of-Equilibrium Crystal Nucleation in Suspensions of Oppositely Charged Colloids,” <i>Physical Review Letters</i> <b>99</b>, 055501 (2007), doi:10.1103/PhysRevLett.99.055501. Local source: <code>Articel-To-Work-With.pdf</code>, especially Eq. (2), Fig. 1, and the surrounding model description.</p>
+<p class="small">Companion master source: YUKAWA_POTENTIAL_REDUCED_UNITS_AND_SYSTEM_SETUP.tex</p>
+</body></html>

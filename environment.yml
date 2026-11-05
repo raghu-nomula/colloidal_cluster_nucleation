@@ -1,0 +1,18 @@
+# Python environment for the analysis scripts.
+#   conda env create -f environment.yml
+#   conda activate yukawa-nucleation
+# Versions below are the ones used on the owner's machine (env "matsci"); newer ones will probably work.
+name: yukawa-nucleation
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy=2.4
+  - scipy=1.17
+  - pandas=3.0
+  - matplotlib-base=3.10
+  - ovito=3.15      # structure identification (CNA, PTM); python module "ovito"
+  - ase=3.27        # only needed for the Phase 2 liquid-validation script
+  - pip
+  - pip:
+      - python-pptx==1.0.2   # only needed to rebuild the meeting slides

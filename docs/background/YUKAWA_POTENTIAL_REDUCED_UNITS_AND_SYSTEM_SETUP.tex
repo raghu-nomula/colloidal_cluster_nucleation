@@ -1,0 +1,314 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{amsmath,amssymb,bm,booktabs,array,longtable,xcolor,hyperref,microtype}
+\usepackage[T1]{fontenc}
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black}
+\definecolor{note}{RGB}{238,246,252}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\sgnq}{s_{ij}}
+\title{Yukawa Potential, Reduced Units, and System Setup\\
+\large Paper definition $\rightarrow$ Fortran implementation $\rightarrow$ $N=1000$ inputs}
+\author{Working note for the MC--NPT reconstruction}
+\date{8 July 2026}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+This note derives the hard-core signed Yukawa model used by Sanz et al.\ (PRL
+99, 055501, 2007), maps it to the present Fortran code, and gives the complete
+conversion between packing fraction, number density, volume, and box length.
+It also records which input values matter for a fresh configuration and which
+are overridden by a restart.  The aim is to make every dimensionless number in
+the simulation auditable.
+\end{abstract}
+\tableofcontents
+
+\section{Physical model in the paper}
+The paper studies an equimolar binary mixture of monodisperse spheres.  Every
+particle has diameter $\sigma$ and charge magnitude $Ze$; the two species have
+opposite charge signs.  Define
+\begin{equation}
+  \sgnq = \begin{cases}
+  +1,&\text{equal charges (types 1--1 or 2--2)},\\
+  -1,&\text{opposite charges (type 1--2)}.
+  \end{cases}
+\end{equation}
+The screened Coulomb pair potential is
+\begin{equation}
+\frac{u_{ij}(r)}{k_{\mathrm B}T_{\rm phys}}=
+\begin{cases}
++\infty, & r<\sigma,\\[2mm]
+\displaystyle \sgnq\,
+\frac{Z^2\lambda_{\mathrm B}}
+{\sigma(1+\kappa\sigma/2)^2}
+\frac{\exp[-\kappa(r-\sigma)]}{r/\sigma},
+& \sigma\le r<r_c,\\[3mm]
+0,&r\ge r_c.
+\end{cases}
+\label{eq:paper-potential}
+\end{equation}
+Here $\lambda_{\mathrm B}=e^2/(\epsilon_s k_{\mathrm B}T_{\rm phys})$ is
+the Bjerrum length and $\kappa$ is the inverse Debye screening length.  The
+paper writes $\kappa=\sqrt{8\pi\lambda_{\mathrm B}\rho_{\rm salt}}$ for its
+electrolyte convention.  The simulation parameters are
+\begin{equation}
+ \kappa\sigma=6, \qquad r_c=3.5\sigma.
+\end{equation}
+The exponential is referenced to contact, $r=\sigma$.  Consequently the
+magnitude of the finite interaction at contact is especially simple.
+
+\section{Energy scale and reduced variables}
+Define the Yukawa contact-energy scale
+\begin{equation}
+ \epsilon_Y \equiv k_{\mathrm B}T_{\rm phys}
+ \frac{Z^2\lambda_{\mathrm B}}
+ {\sigma(1+\kappa\sigma/2)^2}.
+\end{equation}
+The paper's reduced temperature is the inverse contact coupling,
+\begin{equation}
+ T^* \equiv \frac{k_{\mathrm B}T_{\rm phys}}{\epsilon_Y}
+ =\frac{\sigma(1+\kappa\sigma/2)^2}{Z^2\lambda_{\mathrm B}}.
+ \label{eq:Tstar}
+\end{equation}
+Thus $\beta\epsilon_Y=1/T^*$.  This is worth remembering: increasing $T^*$
+weakens the interaction in thermal units.
+
+With $r^*=r/\sigma$, $r_c^*=r_c/\sigma$, $\kappa^*=\kappa\sigma$, and
+$u^*=u/\epsilon_Y$, Eq.~\eqref{eq:paper-potential} becomes
+\begin{equation}
+u^*_{ij}(r^*)=
+\begin{cases}
++\infty,&r^*<1,\\[1mm]
+\displaystyle \sgnq\frac{\exp[-\kappa^*(r^*-1)]}{r^*},
+&1\le r^*<r_c^*,\\[2mm]
+0,&r^*\ge r_c^*.
+\end{cases}
+\label{eq:reduced-potential}
+\end{equation}
+In a Metropolis test the exponent is therefore
+\begin{equation}
+ -\beta\Delta U=-\frac{\Delta U^*}{T^*}.
+\end{equation}
+The code stores $U^*$ and sets \code{BETA=1/TEMP}; hence the input
+\code{TEMP} is $T^*$.
+
+The other reduced variables are
+\begin{align}
+ \rho^*&=\rho\sigma^3=\frac{N\sigma^3}{V},\\
+ p^*&=\frac{p\sigma^3}{\epsilon_Y}
+     =\frac{pT^*\sigma^3}{k_{\mathrm B}T_{\rm phys}},\\
+ V^*&=\frac{V}{\sigma^3},\qquad L^*=\frac{L}{\sigma}.
+\end{align}
+Therefore the Fortran input \code{P} is $p^*$ and lengths are measured in
+$\sigma$.  For the present runs $\sigma=1$, so the numerical values of $r$
+and $r^*$ coincide, but their meanings should not be confused.
+
+\section{Exact map to the Fortran source}
+With \code{sig=1}, \code{kappa=6}, and \code{rc=3.5},
+Eq.~\eqref{eq:reduced-potential} becomes
+\begin{equation}
+ u^*_{ij}(r)=\sgnq\frac{e^{-6(r-1)}}{r},
+ \qquad 1\le r\le3.5.
+ \label{eq:actual-code-potential}
+\end{equation}
+This is exactly what \code{Source/ener.f} evaluates:
+\begin{align}
+ \code{pref}&=\exp[-\code{KAPPA}(r-\sigma)],\\
+ \code{En}&=\sgnq\,\code{pref}/(r/\sigma).
+\end{align}
+The branch $r^2<\sigma^2$ returns $10^{20}$, effectively forbidding an
+overlap.  The branch $r^2>r_c^2$ returns zero.  The potential is truncated,
+not shifted: \code{tailco=.false.} and \code{shift=.false.}.
+
+\subsection{Charge sign, periodicity, and total energy}
+\code{Source/eneri.f} chooses $\sgnq=+1$ when \code{PTYPE(i)==PTYPE(j)} and
+$-1$ otherwise.  It applies the minimum-image convention independently in
+each Cartesian direction.  \code{Source/toterg.f} sums every unordered pair
+once, so
+\begin{equation}
+ U^*=\sum_{i<j}u^*_{ij}(r_{ij}).
+\end{equation}
+The system contains 500 particles of each type.  For a new lattice the code
+assigns alternating IDs to types 1 and 2; restarts store the type explicitly.
+
+\subsection{Pair virial used by the code}
+For the finite part of the interaction,
+\begin{equation}
+ -r\frac{du^*_{ij}}{dr}
+ =\sgnq e^{-\kappa(r-\sigma)}\sigma
+ \left(\kappa+\frac{1}{r}\right),
+\end{equation}
+which is the expression in \code{ener.f}.  The reported continuous estimator
+is
+\begin{equation}
+ p^*_{\rm continuous}=\rho^*T^*+\frac{1}{3V^*}
+ \sum_{i<j}\left(-r_{ij}\frac{du^*_{ij}}{dr_{ij}}\right).
+\end{equation}
+It omits the discontinuous hard-core contact contribution and must not be
+mistaken for the complete mechanical pressure.  The imposed $p^*$ is still
+used correctly in the NpT acceptance rule.
+
+\subsection{Legacy names that do not set the Yukawa strength}
+The model line currently reads
+\begin{verbatim}
+eps sig mass rc kappa
+1.0 1.0 1.0 3.5 6.0
+\end{verbatim}
+The variables \code{eps}, \code{EPS4}, and \code{EPS48} are remnants of the
+old Lennard--Jones code.  \code{ENER} does not multiply the Yukawa energy by
+\code{eps}.  The Yukawa energy scale is fixed by the reduced-unit definition,
+and temperature dependence enters through \code{BETA=1/TEMP}.  In current
+runs \code{eps=1} is a harmless placeholder, not an independent coupling.
+
+\section{Packing fraction, density, volume, and box length}
+For monodisperse spheres of diameter $\sigma$, the volume of one sphere is
+$\pi\sigma^3/6$.  The packing fraction (called $\eta$ here and often $\phi$
+elsewhere) is
+\begin{equation}
+ \boxed{\eta=\frac{N(\pi\sigma^3/6)}{V}
+ =\frac{\pi}{6}\rho^*.}
+\end{equation}
+All required conversions follow:
+\begin{align}
+ \boxed{\rho^*=\frac{6\eta}{\pi}},\qquad
+ \boxed{V^*=\frac{N}{\rho^*}=\frac{N\pi}{6\eta}},\qquad
+ \boxed{L^*=\left(\frac{N}{\rho^*}\right)^{1/3}
+ =\left(\frac{N\pi}{6\eta}\right)^{1/3}}.
+ \label{eq:eta-conversions}
+\end{align}
+These equations are independent of the Yukawa potential; they are pure
+geometry.  Changing $N$ at fixed $\eta$ changes $V$ and $L$, but not $\rho^*$.
+
+\subsection{Worked example: paper state point, $N=1000$ and $\eta=0.526$}
+\begin{align}
+ \rho^*&=\frac{6(0.526)}{\pi}=1.0045860008,\\
+ V^*&=\frac{1000}{1.0045860008}=995.4349346,\\
+ L^*&=(995.4349346)^{1/3}=9.98475990.
+\end{align}
+Thus a newly generated $N=1000$ box at the paper's quoted metastable-liquid
+packing fraction should use \code{rho=1.004586}, giving $L\simeq9.98476$.
+Using \code{rho=0.526} would be wrong: it would treat packing fraction as
+number density and produce $\eta=\pi(0.526)/6\simeq0.2754$.
+
+At the paper's coexistence-liquid value $\eta=0.471$,
+\begin{equation}
+ \rho^*=0.8995437384,\quad V^*=1111.674683,\quad L^*=10.35919254.
+\end{equation}
+
+\subsection{Worked example: current validated $p^*=18$ parent}
+The validated restart has $\rho^*=1.03708035$.  Therefore
+\begin{equation}
+ \eta=\frac{\pi(1.03708035)}{6}=0.543014,qquad
+ L^*=\left(\frac{1000}{1.03708035}\right)^{1/3}=9.87936881.
+\end{equation}
+This state is denser than the paper's $p^*=15$, $\eta\simeq0.526$ liquid.
+That is expected because the clean reconstruction currently imposes
+$p^*=18$, not $p^*=15$.  Packing fraction is an NpT output at fixed pressure,
+not a separately constrained quantity during production.
+
+\section{How initialization actually uses density}
+\code{Source/readdat.f} first computes
+\begin{equation}
+ L^*=\left(\frac{N}{\rho^*_{\rm input}}\right)^{1/3}.
+\end{equation}
+What happens next depends on \code{ibeg}:
+\begin{longtable}{>{\ttfamily}c p{0.73\textwidth}}
+\toprule
+ibeg & Meaning and effect of the density line\\
+\midrule
+0 & Generate a new lattice.  The input $\rho^*$ determines the box length.\\
+1 & Read a restart and retain its box.  The code replaces the nominal input
+density by $N/L_{\rm restart}^3$; the density line does not rescale it.\\
+2 & Read a restart and rescale coordinates and box to the requested input
+density.  Use deliberately: every distance changes.\\
+\bottomrule
+\end{longtable}
+The clean production workflow uses \code{ibeg=1}, so a line such as
+\code{1000 1.0 1.0 18.0 'sc'} does \emph{not} force $\rho^*=1$.  The restart
+box is authoritative.  This is why the run output can begin near
+$\rho^*=1.037$ even though the nominal line says 1.0.
+
+For NpT production, the target thermodynamic controls are $N$, $T^*$, and
+$p^*$.  Density then fluctuates as volume moves are accepted.  An initial
+$\eta$ is used only to construct or rescale a starting box; it is not held
+fixed by NpT sampling.
+
+\section{NpT volume move in reduced units}
+The code proposes a symmetric step in logarithmic volume,
+\begin{equation}
+ \ln V_n^*=\ln V_o^*+(\xi-1/2)\,\code{Vmax},\qquad 0\le\xi<1,
+\end{equation}
+then scales all coordinates by $(V_n^*/V_o^*)^{1/3}$.  Its acceptance
+exponent is
+\begin{equation}
+ -\frac{1}{T^*}\left[\Delta U^*+p^*\Delta V^*ight]
+ +(N+1)\ln\left(\frac{V_n^*}{V_o^*}\right).
+\end{equation}
+The $N+1$ (rather than $N$) is consistent with proposing uniformly in
+$\ln V$.  The physical cutoff remains fixed at $3.5\sigma$ during a volume
+move; it is not scaled with the box.  A trial is rejected if $L/2\le r_c$.
+
+\section{Current parameter map and audit checklist}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Physical/reduced quantity & Current value & Code/input location\\
+\midrule
+$N$ & 1000 & \code{fort.15}, \code{NPART}\\
+composition & 500:500 & \code{PTYPE} in restart\\
+$\sigma$ & 1 & \code{fort.25}: \code{sig}\\
+$T^*$ & 1 & \code{fort.15}: \code{temp}\\
+$p^*$ & 18 & \code{fort.15}: \code{p}\\
+$\kappa\sigma$ & 6 & \code{fort.25}: \code{kappa}\\
+$r_c/\sigma$ & 3.5 & \code{fort.25}: \code{rc}\\
+tail correction & off & \code{tailco=.false.}\\
+energy shift & off & \code{shift=.false.}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Before trusting a run, verify: (i) the restart contains 1000 particles and
+500 of each type; (ii) its first line gives the expected $L$; (iii)
+$N/L^3$ and $\pi N/(6L^3)$ reproduce the reported $\rho^*$ and $\eta$;
+(iv) \code{fort.25} contains $1,1,1,3.5,6$ with shift and tail corrections
+off; (v) $L/2>3.5$; and (vi) no pair has $r<1$.
+
+\section{Relation to the LAMMPS Yukawa convention}
+LAMMPS writes its plain Yukawa interaction as
+\begin{equation}
+ U_{ij}^{\rm LAMMPS}(r)=A_{ij}\frac{e^{-\kappa r}}{r}.
+\end{equation}
+Matching Eq.~\eqref{eq:actual-code-potential} requires
+\begin{equation}
+ A_{ij}=\sgnq\,\sigma e^{\kappa\sigma}.
+\end{equation}
+For $\sigma=1$ and $\kappa=6$, $|A|=e^6=403.4287934927351$, positive for
+like types and negative for unlike types.  Plain LAMMPS Yukawa has no hard
+core, so a cross-check is valid only after confirming that the configuration
+has no $r<\sigma$ overlaps.
+
+\section{What was modified relative to the inherited code}
+The inherited Lennard--Jones skeleton was adapted so that the working source:
+\begin{enumerate}
+\item evaluates the signed, contact-referenced Yukawa pair energy in
+\code{ener.f} and its analytic pair virial;
+\item stores a particle type and assigns equal/opposite signs in
+\code{eneri.f};
+\item reads $\kappa$ and keeps $r_c$ fixed under volume changes;
+\item disables LJ tail corrections and potential shifting for production;
+\item preserves types in restart and trajectory output; and
+\item records $\eta=\pi\rho^*/6$ alongside density in the newer metrics.
+\end{enumerate}
+The later clean-replication instrumentation did not rewrite the pair
+potential or NpT acceptance physics; it added validation, provenance, and
+unambiguous diagnostics.
+
+\section{Reference}
+E. Sanz, C. Valeriani, D. Frenkel, and M. Dijkstra, ``Evidence for
+Out-of-Equilibrium Crystal Nucleation in Suspensions of Oppositely Charged
+Colloids,'' \emph{Physical Review Letters} \textbf{99}, 055501 (2007),
+\href{https://doi.org/10.1103/PhysRevLett.99.055501}{doi:10.1103/PhysRevLett.99.055501}.
+The local source consulted was \code{Articel-To-Work-With.pdf}, especially
+Eq.~(2), Fig.~1, and the surrounding model description.
+
+\end{document}

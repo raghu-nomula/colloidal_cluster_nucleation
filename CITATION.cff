@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below and cite the original paper."
+title: "Brute-force NpT Monte Carlo of oppositely charged colloids at p* = 18: replication of Sanz et al., PRL 99, 055501 (2007)"
+authors:
+  - family-names: Nomula
+    given-names: Raghu
+type: software
+references:
+  - type: article
+    authors:
+      - family-names: Sanz
+        given-names: Eduardo
+      - family-names: Valeriani
+        given-names: Chantal
+      - family-names: Frenkel
+        given-names: Daan
+      - family-names: Dijkstra
+        given-names: Marjolein
+    title: "Evidence for out-of-equilibrium crystal nucleation in suspensions of oppositely charged colloids"
+    journal: "Physical Review Letters"
+    volume: 99
+    start: 055501
+    year: 2007
