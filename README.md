@@ -40,7 +40,7 @@ moves were used.
 ## Quick start (about 10 minutes, no simulation needed)
 
 ```bash
-git clone <repository-url> && cd yukawa-nucleation-replication
+git clone https://github.com/raghu-nomula/colloidal_cluster_nucleation.git && cd colloidal_cluster_nucleation
 conda env create -f environment.yml && conda activate yukawa-nucleation
 python analysis/analyze_example_frames.py        # structure analysis of four saved frames
 make                                              # compile the Fortran Monte Carlo code (needs gfortran)

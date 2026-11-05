@@ -18,7 +18,7 @@ lab notes and in the run manifests still make sense.
 ## 2. Where is what
 
 ```
-yukawa-nucleation-replication/
+colloidal_cluster_nucleation/
 ├── README.md              front page
 ├── CONTRIBUTING.md        how to suggest changes
 ├── LICENSE, CITATION.cff  licence status (undecided) and how to cite
