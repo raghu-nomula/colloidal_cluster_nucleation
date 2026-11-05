@@ -21,7 +21,7 @@ simulations/4_Clean_NoSwap_Replication/common/mc_npt_phase1
 __pycache__/
 *.pyc
 *.aux
-*.out
+docs/reports/*.out
 *.toc
 *.synctex.gz
 .ipynb_checkpoints/

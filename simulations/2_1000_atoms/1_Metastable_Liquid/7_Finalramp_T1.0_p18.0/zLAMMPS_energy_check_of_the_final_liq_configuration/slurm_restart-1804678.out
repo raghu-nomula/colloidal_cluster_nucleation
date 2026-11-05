@@ -1,0 +1,67 @@
+Using LAMMPS binary:
+/usr/local/etc/ebinstD12/software/LAMMPS/29Aug2024_update2-foss-2023a-kokkos/bin/lmp
+Checking EAM support:
+Exception caught: rsmi_init.
+Exception caught: rsmi_init.
+Exception caught: rsmi_init.
+Exception caught: rsmi_init.
+e3b             eam             eam/alloy       eam/alloy/intel eam/alloy/kk    
+eam/alloy/omp   eam/alloy/opt   eam/cd          eam/cd/old      eam/fs          
+OMP_NUM_THREADS = 20
+Exception caught: rsmi_init.
+LAMMPS (29 Aug 2024 - Update 2)
+  using 20 OpenMP thread(s) per MPI task
+Reading data file ...
+  orthogonal box = (0 0 0) to (10.021493 10.021493 10.021493)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  1000 atoms
+  read_data CPU = 0.010 seconds
+WARNING: No fixes with time integration, atoms won't move (src/verlet.cpp:60)
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 3.8
+  ghost atom cutoff = 3.8
+  binsize = 1.9, bins = 6 6 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair yukawa, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Setting up Verlet run ...
+  Unit style    : lj
+  Current step  : 0
+  Time step     : 0.005
+Per MPI rank memory allocation (min/avg/max) = 20.38 | 20.38 | 20.38 Mbytes
+   Step        Atoms        Volume        Density         PotEng         Press     
+         0        1000  1006.46184071 0.993579646589 -874.060263913 -2.04965735982
+Loop time of 1.112e-06 on 20 procs for 0 steps with 1000 atoms
+
+89.9% CPU use with 1 MPI tasks x 20 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0          | 0          | 0          |   0.0 |  0.00
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0          | 0          | 0          |   0.0 |  0.00
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 1.112e-06  |            |       |100.00
+
+Nlocal:           1000 ave        1000 max        1000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           4430 ave        4430 max        4430 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         113981 ave      113981 max      113981 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 113981
+Ave neighs/atom = 113.981
+Neighbor list builds = 0
+Dangerous builds = 0
+LAMMPS_PE=-874.06026391311752377 FORTRAN_PRINTED_PE=-874.06026 DELTA=-3.9131175526563302525e-06
+Total wall time: 0:00:00
