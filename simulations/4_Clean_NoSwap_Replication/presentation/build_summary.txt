@@ -1,0 +1,24 @@
+Deck: MC_NPT_Yukawa_Replication_Results.pptx
+Slides: 16
+
+dr_0.01
+  particle_attempts: 3000001292
+  particle_accepted: 2599655077
+  volume_attempts: 2998708
+  volume_accepted: 642712
+  particle_rate: 0.8665513191385652
+  volume_rate: 0.2143296379640832
+dr_0.04
+  particle_attempts: 2999999724
+  particle_accepted: 1723308643
+  volume_attempts: 3000276
+  volume_accepted: 657759
+  particle_rate: 0.5744362671814699
+  volume_rate: 0.21923283057958667
+
+Snapshots (cycle, largest domain, FCC, HCP):
+  0: 0, 0, 0
+  2049000: 118, 45, 73
+  2112000: 252, 103, 149
+  2285000: 501, 165, 336
+  3000000: 484, 160, 324

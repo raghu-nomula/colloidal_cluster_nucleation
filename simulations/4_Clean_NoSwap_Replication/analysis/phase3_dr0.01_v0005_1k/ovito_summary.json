@@ -1,0 +1,15 @@
+{
+  "source": "/home/raghu/1_phd_raghu/1_work_progress/3_infRETIS_project/0_re-concstruct_paper/2_MC_NPT_Yukawa_potential/4_Clean_NoSwap_Replication/analysis/phase3_dr0.01_v0005_1k/ovito_snapshot.lammpstrj",
+  "ptm_rmsd_cutoff": 0.1,
+  "cluster_cutoff": 1.45,
+  "ptm_counts": {
+    "OTHER": 1000
+  },
+  "ptm_largest_fcc_hcp_cluster": 0,
+  "adaptive_cna_counts": {
+    "OTHER": 997,
+    "HCP": 2,
+    "BCC": 1
+  },
+  "adaptive_cna_largest_fcc_hcp_cluster": 1
+}

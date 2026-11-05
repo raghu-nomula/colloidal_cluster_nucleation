@@ -1,0 +1,25 @@
+{
+  "source": "/home/raghu/1_phd_raghu/1_work_progress/3_infRETIS_project/0_re-concstruct_paper/2_MC_NPT_Yukawa_potential/4_Clean_NoSwap_Replication/common/metastable_liquid_N1000_T1_P18.res",
+  "particles": 1000,
+  "type_counts": {
+    "1": 500,
+    "2": 500
+  },
+  "box": 10.021493240005693,
+  "stored_hbox": 5.0107466200028465,
+  "stored_dr": 0.05984641432057595,
+  "stored_vmax": 0.00017483373007172378,
+  "density": 0.9935796465893625,
+  "packing_fraction": 0.5202370864135807,
+  "minimum_pair_distance": 1.0000040051884491,
+  "hard_core_overlaps": 0,
+  "neighbor_cutoff": 1.45,
+  "mean_neighbor_count": 12.428,
+  "unlike_charge_neighbor_fraction": 0.5711297071129707,
+  "max_low_index_structure_factor": 2.2886309162816985,
+  "max_structure_factor_hkl": [
+    -6,
+    -6,
+    6
+  ]
+}

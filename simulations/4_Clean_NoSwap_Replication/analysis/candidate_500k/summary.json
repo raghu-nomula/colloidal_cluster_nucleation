@@ -1,0 +1,25 @@
+{
+  "source": "/home/raghu/1_phd_raghu/1_work_progress/3_infRETIS_project/0_re-concstruct_paper/2_MC_NPT_Yukawa_potential/2_1000_atoms/2_Actual_KMC_for_nucleation/2_step_50K_to_500K/500K_final_config.res",
+  "particles": 1000,
+  "type_counts": {
+    "1": 500,
+    "2": 500
+  },
+  "box": 9.879368619493322,
+  "stored_hbox": 4.939684309746661,
+  "stored_dr": 0.01,
+  "stored_vmax": 0.005,
+  "density": 1.0370804072338193,
+  "packing_fraction": 0.5430140314246129,
+  "minimum_pair_distance": 1.0000059786443358,
+  "hard_core_overlaps": 0,
+  "neighbor_cutoff": 1.45,
+  "mean_neighbor_count": 12.826,
+  "unlike_charge_neighbor_fraction": 0.5721191330110713,
+  "max_low_index_structure_factor": 2.0342542171086064,
+  "max_structure_factor_hkl": [
+    -6,
+    6,
+    6
+  ]
+}

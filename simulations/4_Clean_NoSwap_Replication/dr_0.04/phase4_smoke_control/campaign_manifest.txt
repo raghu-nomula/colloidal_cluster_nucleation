@@ -1,0 +1,9 @@
+created_utc=2026-07-02T14:17:51Z
+branch=dr_0.04
+campaign=phase4_smoke
+total_cycles=20
+segment_cycles=10
+seed_base=84001
+sampling_interval=5
+vmax=0.0005
+completed_utc=2026-07-02T14:17:51Z

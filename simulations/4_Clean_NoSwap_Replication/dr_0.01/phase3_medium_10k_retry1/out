@@ -1,0 +1,46 @@
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG
+ **************** MC_NPT ***************
+  ******** test random numbers ***********
+  i,ranf()            1  0.54139000735268383     
+  i,ranf()            2  0.78663352123525088     
+  i,ranf()            3  0.12063437196287738     
+  i,ranf()            4  0.38954658450334367     
+  i,ranf()            5  0.43952376659191700     
+  read conf from disk 
+  Number of equilibration cycles             :         0
+  Number of production cycles                :     10000
+  Sample frequency                           :       100
+
+  Number of att. to displ. a part. per cycle :      1000
+  Maximum displacement                       :     0.010
+  Number of att. to change volume  per cycle :         1
+  Maximum change volume                      :     0.001
+
+
+  Number of particles                        :      1000
+  Temperature                                :     1.000
+  Pressure                                   :    18.000
+  Density                                    :     1.037
+  Box length                                 :     9.879
+
+  Model parameters: 
+     epsilon: 1.000
+     sigma  : 1.000
+     mass   : 1.000
+ Total energy initial configuration:   -959.37883
+ Total virial initial configuration:  -6779.13985
+ ======>> Done         2000  out of        10000
+ ======>> Done         4000  out of        10000
+ ======>> Done         6000  out of        10000
+ ======>> Done         8000  out of        10000
+ ======>> Done        10000  out of        10000
+ Number of att. to displ. a part.  :    9999956
+ success:    8668171(= 86.68%)
+ Number of att. to chan. volume    :      10044
+ success:       2156(= 21.47%)
+ Total energy end of simulation    :   -947.71499
+       running energy              :   -947.71499
+       difference                  :  -0.11369E-12
+ Total virial end of simulation    :  -6696.20272
+       running virial              :  -6696.20272
+       difference                  :   0.00000E+00

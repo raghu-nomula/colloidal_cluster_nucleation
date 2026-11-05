@@ -1,0 +1,25 @@
+{
+  "source": "/home/raghu/1_phd_raghu/1_work_progress/3_infRETIS_project/0_re-concstruct_paper/2_MC_NPT_Yukawa_potential/4_Clean_NoSwap_Replication/dr_0.04/phase3_medium_2k/final_config.res",
+  "particles": 1000,
+  "type_counts": {
+    "1": 500,
+    "2": 500
+  },
+  "box": 9.884927536284426,
+  "stored_hbox": 4.942463768142213,
+  "stored_dr": 0.04,
+  "stored_vmax": 0.0005,
+  "density": 1.0353317442630792,
+  "packing_fraction": 0.5420984336341993,
+  "minimum_pair_distance": 1.00000591409874,
+  "hard_core_overlaps": 0,
+  "neighbor_cutoff": 1.45,
+  "mean_neighbor_count": 12.794,
+  "unlike_charge_neighbor_fraction": 0.5683914334844459,
+  "max_low_index_structure_factor": 2.647468956947817,
+  "max_structure_factor_hkl": [
+    -6,
+    -6,
+    -6
+  ]
+}

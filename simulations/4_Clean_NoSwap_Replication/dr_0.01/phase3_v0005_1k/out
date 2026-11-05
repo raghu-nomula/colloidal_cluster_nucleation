@@ -1,0 +1,46 @@
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG
+ **************** MC_NPT ***************
+  ******** test random numbers ***********
+  i,ranf()            1  0.16405728090753124     
+  i,ranf()            2  0.69924156358782041     
+  i,ranf()            3  0.55395253309168946     
+  i,ranf()            4  0.57434397596833930     
+  i,ranf()            5  0.60656979797626132     
+  read conf from disk 
+  Number of equilibration cycles             :         0
+  Number of production cycles                :      1000
+  Sample frequency                           :       100
+
+  Number of att. to displ. a part. per cycle :      1000
+  Maximum displacement                       :     0.010
+  Number of att. to change volume  per cycle :         1
+  Maximum change volume                      :     0.001
+
+
+  Number of particles                        :      1000
+  Temperature                                :     1.000
+  Pressure                                   :    18.000
+  Density                                    :     1.037
+  Box length                                 :     9.879
+
+  Model parameters: 
+     epsilon: 1.000
+     sigma  : 1.000
+     mass   : 1.000
+ Total energy initial configuration:   -959.37883
+ Total virial initial configuration:  -6779.13985
+ ======>> Done          200  out of         1000
+ ======>> Done          400  out of         1000
+ ======>> Done          600  out of         1000
+ ======>> Done          800  out of         1000
+ ======>> Done         1000  out of         1000
+ Number of att. to displ. a part.  :     999966
+ success:     866483(= 86.65%)
+ Number of att. to chan. volume    :       1034
+ success:        203(= 19.63%)
+ Total energy end of simulation    :   -947.94678
+       running energy              :   -947.94678
+       difference                  :  -0.11369E-11
+ Total virial end of simulation    :  -6702.68423
+       running virial              :  -6702.68423
+       difference                  :   0.45475E-11

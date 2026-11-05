@@ -1,0 +1,46 @@
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG
+ **************** MC_NPT ***************
+  ******** test random numbers ***********
+  i,ranf()            1  0.53829487763033512     
+  i,ranf()            2   8.5313539441896347E-002
+  i,ranf()            3  0.79801267462623859     
+  i,ranf()            4  0.52254606973256323     
+  i,ranf()            5  0.10506769012400619     
+  read conf from disk 
+  Number of equilibration cycles             :         0
+  Number of production cycles                :    250000
+  Sample frequency                           :      1000
+
+  Number of att. to displ. a part. per cycle :      1000
+  Maximum displacement                       :     0.040
+  Number of att. to change volume  per cycle :         1
+  Maximum change volume                      :     0.001
+
+
+  Number of particles                        :      1000
+  Temperature                                :     1.000
+  Pressure                                   :    18.000
+  Density                                    :     1.096
+  Box length                                 :     9.699
+
+  Model parameters: 
+     epsilon: 1.000
+     sigma  : 1.000
+     mass   : 1.000
+ Total energy initial configuration:   -810.54851
+ Total virial initial configuration:  -5734.73451
+ ======>> Done        50000  out of       250000
+ ======>> Done       100000  out of       250000
+ ======>> Done       150000  out of       250000
+ ======>> Done       200000  out of       250000
+ ======>> Done       250000  out of       250000
+ Number of att. to displ. a part.  :  250000436
+ success:  144831914(= 57.93%)
+ Number of att. to chan. volume    :     249564
+ success:      57330(= 22.97%)
+ Total energy end of simulation    :   -800.54965
+       running energy              :   -800.54965
+       difference                  :   0.00000E+00
+ Total virial end of simulation    :  -5664.56810
+       running virial              :  -5664.56810
+       difference                  :   0.90949E-12

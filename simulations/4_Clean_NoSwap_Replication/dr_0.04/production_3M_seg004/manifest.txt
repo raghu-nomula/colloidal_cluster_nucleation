@@ -1,0 +1,14 @@
+created_utc=2026-07-02T19:28:09Z
+host=raghu
+branch=dr_0.04
+run_name=production_3M_seg004
+cycles=250000
+seed=94004
+dr=0.04
+vmax=0.0005
+sampling_interval=1000
+start_source=/home/raghu/1_phd_raghu/1_work_progress/3_infRETIS_project/0_re-concstruct_paper/2_MC_NPT_Yukawa_potential/4_Clean_NoSwap_Replication/dr_0.04/production_3M_seg003/final_config.res
+start_sha256=873d1467e74ec1238d3b0b748f53b6779264d3658274743068c083d2929b5884
+executable_sha256=2e6b96bc732a66da48f6ed2151a10a349effd634667a3cd08a04b8995282adca
+completed_utc=2026-07-02T21:03:09Z
+      250000  -0.942869458674E+00   0.103950153455E+01   0.544281730724E+00   0.180000000000E+02  -0.127399019623E+01    250000619    142654628   0.57061710       249381        53366   0.21399385
