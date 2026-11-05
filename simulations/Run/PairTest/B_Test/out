@@ -1,0 +1,30 @@
+ **************** MC_NPT ***************
+  ******** test random numbers ***********
+  i,ranf()            1  0.49541822765309346     
+  i,ranf()            2  0.72291026224571975     
+  i,ranf()            3  0.26992886445263609     
+  i,ranf()            4  0.98262799963697844     
+  i,ranf()            5  0.70716145434794786     
+  read conf from disk 
+  Number of equilibration cycles             :         0
+  Number of production cycles                :         0
+  Sample frequency                           :         1
+
+  Number of att. to displ. a part. per cycle :         0
+  Maximum displacement                       :     0.010
+  Number of att. to change volume  per cycle :         0
+  Maximum change volume                      :     0.005
+
+
+  Number of particles                        :         4
+  Temperature                                :     1.000
+  Pressure                                   :     1.000
+  Density                                    :     0.001
+  Box length                                 :    20.000
+
+  Model parameters: 
+     epsilon: 1.000
+     sigma  : 1.000
+     mass   : 1.000
+ Total energy initial configuration:      0.03319
+ Total virial initial configuration:      0.33191
