@@ -1,0 +1,3 @@
+PID=$(cat job.pid)
+ps -p "$PID" -o pid,lstart,etime,cmd
+#  124803

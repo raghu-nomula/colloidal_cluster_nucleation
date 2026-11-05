@@ -1,0 +1,8 @@
+ibeg  , nequil  , lmax   nsamp  iseed
+1      5000      10000   200    78358
+dr      vmax  succ
+0.12    0.05  50.
+ndispl  nvol
+500      1
+npart temp rho      p     struc
+500   2.0  0.356    2.0   'fcc'

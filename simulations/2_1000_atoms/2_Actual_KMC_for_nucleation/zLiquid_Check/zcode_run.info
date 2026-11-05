@@ -1,0 +1,8 @@
+nohup systemd-inhibit --what=sleep --why="MC 50K production pilot" bash -c 'date; time ./run.sh; date' > terminal.log 2>&1 &
+echo $! > job.pid
+[1] 81031
+
+
+To check the status of running
+ps -p $(cat job.pid) -o pid,etime,%cpu,cmd   # or use directly 81031 here 
+

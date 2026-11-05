@@ -1,0 +1,1 @@
+python3 analyze_q6_cluster.py traj.lammpstrj --rcut 1.45 --dot 0.70 --min-solid-bonds 7 --output cluster_size.dat

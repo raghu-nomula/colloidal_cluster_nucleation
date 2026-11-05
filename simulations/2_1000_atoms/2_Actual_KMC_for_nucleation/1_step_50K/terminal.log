@@ -1,0 +1,31 @@
+nohup: ignoring input
+Wed Jun 17 06:00:03 PM CEST 2026
+Restart dr/vmax after overwrite:
+  1.000000000000E-02   5.000000000000E-03
+======================================
+Running 50k fixed-dr production pilot
+======================================
+Start config : start_liquid.res
+T*           : 1.0
+p*           : 18.0
+rho label    : 0.95
+seed         : 90001
+prod cycles  : 50000
+nsamp        : 1000
+dr fixed     : 0.01
+vmax fixed   : 0.005
+succ         : 0.
+ndispl       : 1000
+nvol         : 1
+======================================
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG
+======================================
+Run complete.
+Final sampled line:
+50000 1.0 18.0 -0.890536129 -1.10956609 1.00544941
+======================================
+
+real	18m34.284s
+user	18m33.663s
+sys	0m0.028s
+Wed Jun 17 06:18:38 PM CEST 2026

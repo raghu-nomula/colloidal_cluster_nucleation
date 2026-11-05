@@ -1,0 +1,8 @@
+ibeg  , nequil  , lmax   nsamp  iseed
+0      0      100   1    91001
+dr      vmax  succ
+0.0    0.0  0.
+ndispl  nvol
+864     1
+npart temp rho      p     struc
+864  1.0  1.0     18.0   'fcc'

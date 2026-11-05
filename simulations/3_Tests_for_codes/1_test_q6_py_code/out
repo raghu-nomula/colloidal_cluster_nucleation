@@ -1,0 +1,48 @@
+ **************** MC_NPT ***************
+  ******** test random numbers ***********
+  i,ranf()            1  0.29605546024298868     
+  i,ranf()            2  0.96141731732082214     
+  i,ranf()            3  0.25399804970525330     
+  i,ranf()            4   1.9951622759418086E-002
+  i,ranf()            5  0.10543188263716252     
+  generate FCC-lattice 
+   1.5874010519681991        9.5244063118091962     
+ Initialisation on lattice: 
+       864 particles placed on a lattice
+  Number of equilibration cycles             :         0
+  Number of production cycles                :       100
+  Sample frequency                           :         1
+
+  Number of att. to displ. a part. per cycle :       864
+  Maximum displacement                       :     0.000
+  Number of att. to change volume  per cycle :         1
+  Maximum change volume                      :     0.000
+
+
+  Number of particles                        :       864
+  Temperature                                :     1.000
+  Pressure                                   :    18.000
+  Density                                    :     1.000
+  Box length                                 :     9.524
+
+  Model parameters: 
+     epsilon: 1.000
+     sigma  : 1.000
+     mass   : 1.000
+ Total energy initial configuration:   -695.21974
+ Total virial initial configuration:  -5265.81021
+ ======>> Done           20  out of          100
+ ======>> Done           40  out of          100
+ ======>> Done           60  out of          100
+ ======>> Done           80  out of          100
+ ======>> Done          100  out of          100
+ Number of att. to displ. a part.  :      86406
+ success:      86406(= *****%)
+ Number of att. to chan. volume    :         94
+ success:         94(= *****%)
+ Total energy end of simulation    :   -695.21974
+       running energy              :   -695.21974
+       difference                  :   0.00000E+00
+ Total virial end of simulation    :  -5265.81021
+       running virial              :  -5265.81021
+       difference                  :   0.00000E+00

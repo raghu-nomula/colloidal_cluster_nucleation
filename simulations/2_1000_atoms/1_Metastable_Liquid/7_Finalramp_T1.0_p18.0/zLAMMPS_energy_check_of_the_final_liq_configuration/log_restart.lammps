@@ -1,0 +1,79 @@
+LAMMPS (29 Aug 2024 - Update 2)
+  using 20 OpenMP thread(s) per MPI task
+# Cross-check the full-precision Fortran restart configuration in LAMMPS.
+units          lj
+atom_style     atomic
+boundary       p p p
+read_data      from_final_restart.data
+Reading data file ...
+  orthogonal box = (0 0 0) to (10.021493 10.021493 10.021493)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  1000 atoms
+  read_data CPU = 0.010 seconds
+
+# Fortran: s_ij * exp[-kappa*(r-sigma)]/(r/sigma)
+# LAMMPS:  A_ij * exp(-kappa*r)/r
+# Thus A_ij = s_ij * sigma*exp(kappa*sigma).
+variable       amplitude equal exp(6.0)
+pair_style     yukawa 6.0 3.5
+pair_coeff     1 1 ${amplitude}
+pair_coeff     1 1 403.428793492735
+pair_coeff     1 2 -${amplitude}
+pair_coeff     1 2 -403.428793492735
+pair_coeff     2 2 ${amplitude}
+pair_coeff     2 2 403.428793492735
+pair_modify    shift no
+
+thermo         1
+thermo_style   custom step atoms vol density pe press
+thermo_modify  norm no format float %.12g
+run            0
+WARNING: No fixes with time integration, atoms won't move (src/verlet.cpp:60)
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 3.8
+  ghost atom cutoff = 3.8
+  binsize = 1.9, bins = 6 6 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair yukawa, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 20.38 | 20.38 | 20.38 Mbytes
+   Step        Atoms        Volume        Density         PotEng         Press     
+         0        1000  1006.46184071 0.993579646589 -874.060263913 -2.04965735982
+Loop time of 1.112e-06 on 20 procs for 0 steps with 1000 atoms
+
+89.9% CPU use with 1 MPI tasks x 20 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0          | 0          | 0          |   0.0 |  0.00
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0          | 0          | 0          |   0.0 |  0.00
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 1.112e-06  |            |       |100.00
+
+Nlocal:           1000 ave        1000 max        1000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           4430 ave        4430 max        4430 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         113981 ave      113981 max      113981 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 113981
+Ave neighs/atom = 113.981
+Neighbor list builds = 0
+Dangerous builds = 0
+
+variable       fortran_pe equal -874.06026
+variable       delta equal pe-v_fortran_pe
+print          "LAMMPS_PE=$(pe) FORTRAN_PRINTED_PE=${fortran_pe} DELTA=$(v_delta)"
+LAMMPS_PE=-874.06026391311752377 FORTRAN_PRINTED_PE=-874.06026 DELTA=-3.9131175526563302525e-06
+Total wall time: 0:00:00

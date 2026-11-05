@@ -1,0 +1,132 @@
+ **************** MC_NPT ***************
+  ******** test random numbers ***********
+  i,ranf()            1  0.40975596092573785     
+  i,ranf()            2  0.48931900143552387     
+  i,ranf()            3  0.81148553263652323     
+  i,ranf()            4  0.22240951989187152     
+  i,ranf()            5  0.56824480935541466     
+  read conf from disk 
+  Number of equilibration cycles             :      2000
+  Number of production cycles                :      3000
+  Sample frequency                           :       100
+
+  Number of att. to displ. a part. per cycle :       500
+  Maximum displacement                       :     1.959
+  Number of att. to change volume  per cycle :         1
+  Maximum change volume                      :     0.013
+
+
+  Number of particles                        :       500
+  Temperature                                :     2.000
+  Pressure                                   :     2.000
+  Density                                    :     0.179
+  Box length                                 :    14.082
+
+  Model parameters: 
+     epsilon: 1.000
+     sigma  : 1.000
+     mass   : 1.000
+ Total energy initial configuration:    -30.61653
+ Total virial initial configuration:   -225.20942
+  Start equilibration 
+ ======>> Done          400  out of         2000
+ Max. displ. set to      :  1.841 (old :  1.959)
+ Frac. acc.: 0.47 attempts:  200012 succes:   93946
+ Max. vol. chan. set to:  0.007 (old :  0.013)
+ Frac. acc.: 0.20 attempts:     388 succes:      79
+ ======>> Done          800  out of         2000
+ Max. displ. set to      :  1.580 (old :  1.841)
+ Frac. acc.: 0.43 attempts:  199982 succes:   85837
+ Max. vol. chan. set to:  0.004 (old :  0.007)
+ Frac. acc.: 0.32 attempts:     418 succes:     132
+ ======>> Done         1200  out of         2000
+ Max. displ. set to      :  1.351 (old :  1.580)
+ Frac. acc.: 0.43 attempts:  199959 succes:   85501
+ Max. vol. chan. set to:  0.004 (old :  0.004)
+ Frac. acc.: 0.44 attempts:     441 succes:     193
+ ======>> Done         1600  out of         2000
+ Max. displ. set to      :  1.199 (old :  1.351)
+ Frac. acc.: 0.44 attempts:  199977 succes:   88719
+ Max. vol. chan. set to:  0.004 (old :  0.004)
+ Frac. acc.: 0.49 attempts:     423 succes:     206
+ ======>> Done         2000  out of         2000
+ Max. displ. set to      :  1.075 (old :  1.199)
+ Frac. acc.: 0.45 attempts:  199994 succes:   89679
+ Max. vol. chan. set to:  0.003 (old :  0.004)
+ Frac. acc.: 0.48 attempts:     406 succes:     195
+ Number of att. to displ. a part.  :     999924
+ success:     443682(= 44.37%)
+ Number of att. to chan. volume    :       2076
+ success:        805(= 38.78%)
+ Total energy end of simulation    :    -61.46407
+       running energy              :    -61.46407
+       difference                  :  -0.28422E-13
+ Total virial end of simulation    :   -456.16994
+       running virial              :   -456.16994
+       difference                  :  -0.17053E-12
+  Start production 
+ ======>> Done          600  out of         3000
+ Max. displ. set to      :  0.984 (old :  1.075)
+ Frac. acc.: 0.46 attempts:  300016 succes:  137315
+ Max. vol. chan. set to:  0.003 (old :  0.003)
+ Frac. acc.: 0.49 attempts:     584 succes:     286
+ ======>> Done         1200  out of         3000
+ Max. displ. set to      :  0.908 (old :  0.984)
+ Frac. acc.: 0.46 attempts:  299990 succes:  138354
+ Max. vol. chan. set to:  0.003 (old :  0.003)
+ Frac. acc.: 0.51 attempts:     610 succes:     310
+ ======>> Done         1800  out of         3000
+ Max. displ. set to      :  0.847 (old :  0.908)
+ Frac. acc.: 0.47 attempts:  300023 succes:  139961
+ Max. vol. chan. set to:  0.004 (old :  0.003)
+ Frac. acc.: 0.54 attempts:     577 succes:     309
+ ======>> Done         2400  out of         3000
+ Max. displ. set to      :  0.781 (old :  0.847)
+ Frac. acc.: 0.46 attempts:  300018 succes:  138278
+ Max. vol. chan. set to:  0.004 (old :  0.004)
+ Frac. acc.: 0.55 attempts:     582 succes:     318
+ ======>> Done         3000  out of         3000
+ Max. displ. set to      :  0.713 (old :  0.781)
+ Frac. acc.: 0.46 attempts:  299993 succes:  137059
+ Max. vol. chan. set to:  0.004 (old :  0.004)
+ Frac. acc.: 0.45 attempts:     607 succes:     276
+ Number of att. to displ. a part.  :    1500040
+ success:     690967(= 46.06%)
+ Number of att. to chan. volume    :       2960
+ success:       1499(= 50.64%)
+ Total energy end of simulation    :    -84.88911
+       running energy              :    -84.88911
+       difference                  :   0.25580E-12
+ Total virial end of simulation    :   -630.24757
+       running virial              :   -630.24757
+       difference                  :   0.11369E-12
+  ***** Calculate block averages ************
+   number of averages            3
+ block data     1  -0.066079   0.329838   0.187936
+ block data     2  -0.069151   0.330815   0.189351
+ block data     3  -0.076857   0.325962   0.189948
+ block data     4  -0.071344   0.335802   0.193245
+ block data     5  -0.104112   0.314186   0.193879
+ block data     6  -0.068168   0.341722   0.196044
+ block data     7  -0.089703   0.329781   0.198693
+ block data     8  -0.080275   0.337901   0.198510
+ block data     9  -0.068174   0.348110   0.199460
+ block data    10  -0.075080   0.348150   0.201925
+ block data    11  -0.066669   0.360864   0.205172
+ block data    12  -0.066323   0.359058   0.204992
+ block data    13  -0.065004   0.361242   0.205882
+ block data    14  -0.072481   0.358927   0.207004
+ block data    15  -0.059810   0.372408   0.209343
+ block data    16  -0.066974   0.368255   0.210382
+ block data    17  -0.099501   0.346607   0.212354
+ block data    18  -0.105165   0.346498   0.215285
+ block data    19  -0.057905   0.386719   0.216173
+ block data    20  -0.065985   0.383089   0.218114
+ ###### energy       -0.11210696         0.00458902
+ ###### press         0.52394516         0.00634890
+ ###### dens          0.30402699         0.00302690
+   number of blocks           30
+         0   0.0044   0.0006   0.0059   0.0008   0.0042   0.0006
+         1   0.0059   0.0011   0.0083   0.0016   0.0061   0.0012
+         2   0.0065   0.0019   0.0115   0.0033   0.0086   0.0025
+         3   0.0075   0.0038   0.0180   0.0090   0.0115   0.0057

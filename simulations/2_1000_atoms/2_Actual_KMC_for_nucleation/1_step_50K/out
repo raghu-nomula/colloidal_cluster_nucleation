@@ -1,0 +1,76 @@
+ **************** MC_NPT ***************
+  ******** test random numbers ***********
+  i,ranf()            1  0.95832218759847354     
+  i,ranf()            2  0.55267806791189877     
+  i,ranf()            3  0.69732986581813450     
+  i,ranf()            4  0.23843142747102686     
+  i,ranf()            5   2.2136420210487784E-002
+  read conf from disk 
+  Number of equilibration cycles             :         0
+  Number of production cycles                :     50000
+  Sample frequency                           :      1000
+
+  Number of att. to displ. a part. per cycle :      1000
+  Maximum displacement                       :     0.010
+  Number of att. to change volume  per cycle :         1
+  Maximum change volume                      :     0.005
+
+
+  Number of particles                        :      1000
+  Temperature                                :     1.000
+  Pressure                                   :    18.000
+  Density                                    :     0.994
+  Box length                                 :    10.021
+
+  Model parameters: 
+     epsilon: 1.000
+     sigma  : 1.000
+     mass   : 1.000
+ Total energy initial configuration:   -874.06026
+ Total virial initial configuration:  -6188.70576
+ ======>> Done        10000  out of        50000
+ ======>> Done        20000  out of        50000
+ ======>> Done        30000  out of        50000
+ ======>> Done        40000  out of        50000
+ ======>> Done        50000  out of        50000
+ Number of att. to displ. a part.  :   49999965
+ success:   44214672(= 88.43%)
+ Number of att. to chan. volume    :      50035
+ success:       1202(=  2.40%)
+ Total energy end of simulation    :   -890.53612
+       running energy              :   -890.53612
+       difference                  :  -0.20464E-11
+ Total virial end of simulation    :  -6310.65713
+       running virial              :  -6310.65713
+       difference                  :   0.10914E-10
+  ***** Calculate block averages ************
+   number of averages            3
+ block data     1  -0.692631  -0.833489   0.795391
+ block data     2  -0.692953  -0.834440   0.795299
+ block data     3  -0.695502  -0.841155   0.795668
+ block data     4  -0.689649  -0.827124   0.796239
+ block data     5  -0.690565  -0.831225   0.797268
+ block data     6  -0.698447  -0.848156   0.797513
+ block data     7  -0.712691  -0.880545   0.798284
+ block data     8  -0.703808  -0.861024   0.798241
+ block data     9  -0.704100  -0.861501   0.798079
+ block data    10  -0.694822  -0.840022   0.798394
+ block data    11  -0.700977  -0.853564   0.798477
+ block data    12  -0.685528  -0.820822   0.798458
+ block data    13  -0.701301  -0.855881   0.798992
+ block data    14  -0.696347  -0.843707   0.799909
+ block data    15  -0.698743  -0.850169   0.800633
+ block data    16  -0.707757  -0.869747   0.801128
+ block data    17  -0.705046  -0.865977   0.801520
+ block data    18  -0.709330  -0.875113   0.802022
+ block data    19  -0.722272  -0.904171   0.802138
+ block data    20  -0.710214  -0.878862   0.802106
+ ###### energy       -0.87579276         0.00288647
+ ###### press        -1.06729337         0.00662129
+ ###### dens          0.99848498         0.00061317
+   number of blocks           50
+         0   0.0021   0.0002   0.0049   0.0005   0.0005   0.0000
+         1   0.0026   0.0004   0.0063   0.0009   0.0007   0.0001
+         2   0.0033   0.0007   0.0079   0.0017   0.0010   0.0002
+         3   0.0035   0.0011   0.0090   0.0029   0.0014   0.0004
+         4   0.0049   0.0024   0.0128   0.0064   0.0021   0.0010
