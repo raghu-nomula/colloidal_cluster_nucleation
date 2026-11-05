@@ -1,0 +1,12 @@
+created_utc=2026-07-10T10:31:12Z
+stage=stage_c
+cycles=20000
+seed=87101
+dr=0.01
+vmax=0.00040
+nsamp=25
+parent=/home/raghu/1_phd_raghu/1_work_progress/3_infRETIS_project/0_re-concstruct_paper/2_MC_NPT_Yukawa_potential/4_Clean_NoSwap_Replication/common/validated_parent_N1000_T1_P18.res
+parent_sha256=7e406f2b61fc128cf919327341723516e88824c44104a88e84fb0d4fc09c00a0
+executable_sha256=2e6b96bc732a66da48f6ed2151a10a349effd634667a3cd08a04b8995282adca
+completed_utc=2026-07-10T10:39:00Z
+       20000  -0.943227700462E+00   0.103675495297E+01   0.542843623972E+00   0.180000000000E+02  -0.126830619758E+01     20000269     17336123   0.86679449        19731         5167   0.26187218
